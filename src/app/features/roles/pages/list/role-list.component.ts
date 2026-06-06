@@ -9,10 +9,10 @@ import { ToastModule } from 'primeng/toast'
 import { ConfirmationService, MessageService } from 'primeng/api'
 import { FormsModule } from '@angular/forms'
 
-import { UserService, User } from '../../services/user.service'
+import { RoleService, Role } from '../../services/role.service'
 
 @Component({
-  selector: 'app-user-list',
+  selector: 'app-role-list',
   standalone: true,
   imports: [
     TableModule,
@@ -24,16 +24,16 @@ import { UserService, User } from '../../services/user.service'
     FormsModule,
   ],
   providers: [ConfirmationService, MessageService],
-  templateUrl: './user-list.component.html',
-  styleUrl: './user-list.component.scss',
+  templateUrl: './role-list.component.html',
+  styleUrl: './role-list.component.scss',
 })
-export class UserListComponent implements OnInit {
-  private userService = inject(UserService)
+export class RoleListComponent implements OnInit {
+  private roleService = inject(RoleService)
   private router = inject(Router)
   private confirmationService = inject(ConfirmationService)
   private messageService = inject(MessageService)
 
-  users = signal<User[]>([])
+  roles = signal<Role[]>([])
   loading = signal(false)
   totalRecords = signal(0)
   searchTerm = signal('')
@@ -42,21 +42,21 @@ export class UserListComponent implements OnInit {
   limit = 20
 
   ngOnInit(): void {
-    this.loadUsers()
+    this.loadRoles()
   }
 
-  loadUsers(): void {
+  loadRoles(): void {
     this.loading.set(true)
-    this.userService.getAll(this.page, this.limit, this.searchTerm()).subscribe({
+    this.roleService.getAll(this.page, this.limit, this.searchTerm()).subscribe({
       next: (res) => {
         if (res.success) {
-          this.users.set(res.data.data)
+          this.roles.set(res.data.data)
           this.totalRecords.set(res.data.meta.total)
         }
         this.loading.set(false)
       },
       error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudieron cargar los usuarios' })
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudieron cargar los roles' })
         this.loading.set(false)
       },
     })
@@ -64,47 +64,51 @@ export class UserListComponent implements OnInit {
 
   onSearch(): void {
     this.page = 1
-    this.loadUsers()
+    this.loadRoles()
   }
 
   onPageChange(event: any): void {
     this.page = Math.floor(event.first / event.rows) + 1
     this.limit = event.rows
-    this.loadUsers()
+    this.loadRoles()
   }
 
   goToCreate(): void {
-    this.router.navigate(['/admin/users/new'])
+    this.router.navigate(['/admin/roles/new'])
   }
 
   goToEdit(id: string): void {
-    this.router.navigate([`/admin/users/${id}/edit`])
+    this.router.navigate([`/admin/roles/${id}/edit`])
   }
 
-  confirmDelete(user: User): void {
+  confirmDelete(role: Role): void {
     this.confirmationService.confirm({
-      message: `¿Estás seguro de eliminar a ${user.name} ${user.lastName}?`,
+      message: `¿Estás seguro de eliminar el rol "${role.name}"?`,
       header: 'Confirmar eliminación',
       icon: 'pi pi-exclamation-triangle',
-      accept: () => this.deleteUser(user.id),
+      accept: () => this.deleteRole(role.id),
     })
   }
 
-  deleteUser(id: string): void {
-    this.userService.remove(id).subscribe({
+  deleteRole(id: string): void {
+    this.roleService.remove(id).subscribe({
       next: (res) => {
         if (res.success) {
-          this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Usuario eliminado' })
-          this.loadUsers()
+          this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Rol eliminado' })
+          this.loadRoles()
         }
       },
-      error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo eliminar el usuario' })
+      error: (err) => {
+        const detail =
+          err?.error?.statusCode === 409
+            ? 'No se puede eliminar: el rol tiene usuarios asignados'
+            : 'No se pudo eliminar el rol'
+        this.messageService.add({ severity: 'error', summary: 'Error', detail })
       },
     })
   }
 
-  getStatusSeverity(active: boolean): 'success' | 'danger' {
-    return active ? 'success' : 'danger'
+  getStatusSeverity(isActive: boolean): 'success' | 'danger' {
+    return isActive ? 'success' : 'danger'
   }
 }

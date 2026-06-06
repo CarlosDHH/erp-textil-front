@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection, isDevMode, provideAppInitializer, inject } from '@angular/core'
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection, isDevMode } from '@angular/core'
 import { provideRouter, withInMemoryScrolling } from '@angular/router'
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async'
 import { provideHttpClient, withInterceptors } from '@angular/common/http'
@@ -14,17 +14,8 @@ import { authReducer } from './features/auth/store/auth.reducer'
 import { AuthEffects } from './features/auth/store/auth.effects'
 import { authInterceptor } from './core/interceptors/auth.interceptor'
 
-import { IndexedDbService } from './core/services/indexed-db.service'
-import { SyncService } from './core/services/sync.service'
-
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideAppInitializer(async () => {
-      const idbService = inject(IndexedDbService)
-      const syncService = inject(SyncService)
-      await idbService.init()
-      syncService.startListening()
-    }),
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideAnimationsAsync(),

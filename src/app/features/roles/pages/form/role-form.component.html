@@ -1,0 +1,60 @@
+<div class="page-container">
+  <p-toast />
+
+  <div class="page-header">
+    <div class="header-left">
+      <p-button icon="pi pi-arrow-left" [text]="true" (onClick)="goBack()" />
+      <h2>{{ isEdit() ? 'Editar rol' : 'Nuevo rol' }}</h2>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <div class="form-grid">
+        <div class="field">
+          <label>Nombre</label>
+          <input pInputText formControlName="name" placeholder="Nombre del rol" class="w-full" />
+          @if (form.get('name')?.invalid && form.get('name')?.touched) {
+            <small class="error-msg">El nombre es requerido</small>
+          }
+        </div>
+
+        @if (isEdit()) {
+          <div class="field">
+            <label>Estado</label>
+            <p-select
+              formControlName="isActive"
+              [options]="statusOptions"
+              optionLabel="label"
+              optionValue="value"
+              styleClass="w-full"
+            />
+          </div>
+        }
+
+        <div class="field full-width">
+          <label>Descripción</label>
+          <textarea
+            pTextarea
+            formControlName="description"
+            placeholder="Descripción del rol (opcional)"
+            rows="3"
+            class="w-full"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <p-button label="Cancelar" [outlined]="true" (onClick)="goBack()" />
+        <p-button
+          type="submit"
+          [label]="isEdit() ? 'Guardar cambios' : 'Crear rol'"
+          [loading]="loading()"
+          [disabled]="form.invalid"
+        />
+      </div>
+
+    </form>
+  </div>
+</div>

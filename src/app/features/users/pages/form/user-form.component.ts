@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core'
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms'
 import { Router, ActivatedRoute } from '@angular/router'
 import { InputTextModule } from 'primeng/inputtext'
-import { InputMaskModule } from 'primeng/inputmask';
+import { InputMaskModule } from 'primeng/inputmask'
 import { SelectModule } from 'primeng/select'
 import { ButtonModule } from 'primeng/button'
 import { ToastModule } from 'primeng/toast'
@@ -10,6 +10,7 @@ import { PasswordModule } from 'primeng/password'
 import { MessageService } from 'primeng/api'
 
 import { UserService } from '../../services/user.service'
+import { RoleService } from '../../../roles/services/role.service'
 
 @Component({
   selector: 'app-user-form',
@@ -30,6 +31,7 @@ import { UserService } from '../../services/user.service'
 export class UserFormComponent implements OnInit {
   private fb = inject(FormBuilder)
   private userService = inject(UserService)
+  private roleService = inject(RoleService)
   private router = inject(Router)
   private route = inject(ActivatedRoute)
   private messageService = inject(MessageService)
@@ -38,10 +40,7 @@ export class UserFormComponent implements OnInit {
   isEdit = signal(false)
   userId = signal<string | null>(null)
 
-  roles = [
-    { label: 'Administrador', value: 'ADMIN' },
-    { label: 'Operador', value: 'OPERATOR' },
-  ]
+  roles = signal<{ label: string; value: string }[]>([])
 
   statusOptions = [
     { label: 'Activo', value: true },
@@ -53,14 +52,15 @@ export class UserFormComponent implements OnInit {
     lastName: ['', [Validators.required]],
     email:    ['', [Validators.required, Validators.email]],
     phone:    ['', [Validators.required, Validators.minLength(10), Validators.maxLength(15)]],
-    role:     ['OPERATOR', [Validators.required]],
+    roleId:   ['', [Validators.required]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     active:   [true],
   })
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id')
+    this.loadRoles()
 
+    const id = this.route.snapshot.paramMap.get('id')
     if (id) {
       this.isEdit.set(true)
       this.userId.set(id)
@@ -70,20 +70,40 @@ export class UserFormComponent implements OnInit {
     }
   }
 
+  private loadRoles(): void {
+    this.roleService.getAll(1, 100).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.roles.set(
+            res.data.data.map((r) => ({ label: r.name, value: r.id }))
+          )
+        }
+      },
+    })
+  }
+
   loadUser(id: string): void {
     this.loading.set(true)
     this.userService.getById(id).subscribe({
       next: (res) => {
         if (res.success) {
           const { name, lastName, email, phone, role, active } = res.data
-          this.form.patchValue({ name, lastName, email, phone, role, active })
+          const matchedRole = this.roles().find((r) => r.label === role)
+          this.form.patchValue({
+            name,
+            lastName,
+            email,
+            phone,
+            roleId: matchedRole?.value ?? '',
+            active,
+          })
         }
         this.loading.set(false)
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo cargar el usuario' })
         this.loading.set(false)
-      }
+      },
     })
   }
 
@@ -94,12 +114,12 @@ export class UserFormComponent implements OnInit {
     const value = this.form.value
 
     if (this.isEdit()) {
-      const payload: any = {
-        name: value.name,
-        lastName: value.lastName,
-        phone: value.phone,
-        role: value.role,
-        active: value.active,
+      const payload = {
+        name: value.name!,
+        lastName: value.lastName!,
+        phone: value.phone!,
+        roleId: value.roleId!,
+        active: value.active!,
       }
 
       this.userService.update(this.userId()!, payload).subscribe({
@@ -113,10 +133,19 @@ export class UserFormComponent implements OnInit {
         error: () => {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo actualizar el usuario' })
           this.loading.set(false)
-        }
+        },
       })
     } else {
-      this.userService.create(value as any).subscribe({
+      const payload = {
+        name: value.name!,
+        lastName: value.lastName!,
+        email: value.email!,
+        phone: value.phone!,
+        password: value.password!,
+        roleId: value.roleId!,
+      }
+
+      this.userService.create(payload).subscribe({
         next: (res) => {
           if (res.success) {
             this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Usuario creado' })
@@ -127,7 +156,7 @@ export class UserFormComponent implements OnInit {
         error: () => {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo crear el usuario' })
           this.loading.set(false)
-        }
+        },
       })
     }
   }

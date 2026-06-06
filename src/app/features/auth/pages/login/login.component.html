@@ -17,66 +17,42 @@
     </div>
 
     <div class="brand-inner">
-      <a routerLink="/home" class="back-link">
-        <i class="pi pi-arrow-left"></i>
-        Volver al inicio
-      </a>
-
       <div class="brand-logo">
         <div class="logo-icon">
-          <i class="pi pi-wifi"></i>
+          <i class="pi pi-bolt"></i>
         </div>
-        <span>Renta Internet</span>
+        <span>ERP</span>
       </div>
 
       <h2 class="brand-headline">
-        Conectividad que impulsa<br />
-        <span>tu negocio</span>
+        Gestiona tu negocio<br />
+        <span>desde un solo lugar</span>
       </h2>
       <p class="brand-sub">
-        Gestiona servicios, usuarios y contratos desde un solo lugar, en tiempo real.
+        Panel de administración para el control de usuarios, roles y operaciones del sistema.
       </p>
-
-      <div class="brand-stats">
-        <div class="stat">
-          <span class="stat-num">99.9%</span>
-          <span class="stat-label">Uptime</span>
-        </div>
-        <div class="stat">
-          <span class="stat-num">500+</span>
-          <span class="stat-label">Clientes</span>
-        </div>
-        <div class="stat">
-          <span class="stat-num">10G</span>
-          <span class="stat-label">Velocidad</span>
-        </div>
-      </div>
     </div>
   </aside>
 
   <!-- ── Right: Form panel ── -->
   <main class="form-panel">
     <div class="mobile-header">
-      <a routerLink="/home" class="mobile-back">
-        <i class="pi pi-arrow-left"></i>
-        Volver al inicio
-      </a>
       <div class="mobile-logo">
         <div class="logo-icon-sm">
-          <i class="pi pi-wifi"></i>
+          <i class="pi pi-bolt"></i>
         </div>
-        <span>Renta Internet</span>
+        <span>ERP</span>
       </div>
     </div>
 
     <div class="login-card">
       <div class="login-header">
-        <h1>Bienvenido de vuelta</h1>
+        <h1>Bienvenido</h1>
         <p>Ingresa tus credenciales para acceder al panel</p>
       </div>
 
-      @if (error$ | async; as string) {
-        <p-message severity="error" [text]="'Credenciales incorrectas. Intenta de nuevo.'" styleClass="w-full mb-4" />
+      @if (error$ | async; as errorMsg) {
+        <p-message severity="error" [text]="errorMsg" styleClass="w-full mb-4" />
       }
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">

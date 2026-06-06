@@ -12,8 +12,10 @@ export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   return store.select(selectUserRole).pipe(
     take(1),
     map((role) => {
-      if (role && allowedRoles.includes(role)) return true
-      return router.createUrlTree(['/unauthorized'])
+      const normalizedRole = role?.toLowerCase() ?? ''
+      const allowed = allowedRoles.map((r) => r.toLowerCase())
+      if (normalizedRole && allowed.includes(normalizedRole)) return true
+      return router.createUrlTree(['/admin/dashboard'])
     })
   )
 }

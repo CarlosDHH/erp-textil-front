@@ -48,8 +48,8 @@
         <div class="field">
           <label>Rol</label>
           <p-select
-            formControlName="role"
-            [options]="roles"
+            formControlName="roleId"
+            [options]="roles()"
             optionLabel="label"
             optionValue="value"
             placeholder="Selecciona un rol"

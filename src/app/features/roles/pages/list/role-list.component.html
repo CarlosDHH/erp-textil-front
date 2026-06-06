@@ -3,15 +3,15 @@
   <p-confirmDialog />
 
   <div class="page-header">
-    <h2>Usuarios</h2>
-    <p-button label="Nuevo usuario" icon="pi pi-plus" (onClick)="goToCreate()" />
+    <h2>Roles</h2>
+    <p-button label="Nuevo rol" icon="pi pi-plus" (onClick)="goToCreate()" />
   </div>
 
   <div class="search-bar">
     <input
       pInputText
       type="text"
-      placeholder="Buscar por nombre o correo..."
+      placeholder="Buscar por nombre..."
       [(ngModel)]="searchTerm"
       (keyup.enter)="onSearch()"
       class="search-input"
@@ -20,7 +20,7 @@
   </div>
 
   <p-table
-    [value]="users()"
+    [value]="roles()"
     [loading]="loading()"
     [paginator]="true"
     [rows]="limit"
@@ -33,24 +33,20 @@
     <ng-template pTemplate="header">
       <tr>
         <th>Nombre</th>
-        <th>Correo</th>
-        <th>Teléfono</th>
-        <th>Rol</th>
+        <th>Descripción</th>
         <th>Estado</th>
         <th>Acciones</th>
       </tr>
     </ng-template>
 
-    <ng-template pTemplate="body" let-user>
+    <ng-template pTemplate="body" let-role>
       <tr>
-        <td>{{ user.name }} {{ user.lastName }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.phone ?? '—' }}</td>
-        <td>{{ user.role }}</td>
+        <td>{{ role.name }}</td>
+        <td>{{ role.description ?? '—' }}</td>
         <td>
           <p-tag
-            [value]="user.active ? 'Activo' : 'Inactivo'"
-            [severity]="getStatusSeverity(user.active)"
+            [value]="role.isActive ? 'Activo' : 'Inactivo'"
+            [severity]="getStatusSeverity(role.isActive)"
           />
         </td>
         <td>
@@ -60,14 +56,14 @@
               [rounded]="true"
               [text]="true"
               severity="info"
-              (onClick)="goToEdit(user.id)"
+              (onClick)="goToEdit(role.id)"
             />
             <p-button
               icon="pi pi-trash"
               [rounded]="true"
               [text]="true"
               severity="danger"
-              (onClick)="confirmDelete(user)"
+              (onClick)="confirmDelete(role)"
             />
           </div>
         </td>
@@ -76,7 +72,7 @@
 
     <ng-template pTemplate="empty">
       <tr>
-        <td colspan="6" class="empty-message">No se encontraron usuarios</td>
+        <td colspan="4" class="empty-message">No se encontraron roles</td>
       </tr>
     </ng-template>
   </p-table>

@@ -1,7 +1,7 @@
 {
-  "name": "Renta Internet",
-  "short_name": "RentaNet",
-  "description": "Sistema de gestión de rentas de internet",
+  "name": "ERP",
+  "short_name": "ERP",
+  "description": "Sistema ERP de gestión empresarial",
   "display": "standalone",
   "scope": "/",
   "start_url": "/",

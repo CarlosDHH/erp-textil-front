@@ -3,6 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Router } from '@angular/router'
 import { catchError, map, switchMap, tap } from 'rxjs/operators'
 import { of } from 'rxjs'
+import { HttpErrorResponse } from '@angular/common/http'
 import * as AuthActions from './auth.actions'
 import { AuthService } from '../services/auth.service'
 import { StorageService } from '../../../core/services/storage.service'
@@ -49,9 +50,11 @@ export class AuthEffects {
               refreshToken: response.data.refreshToken,
             })
           }),
-          catchError((error) =>
-            of(AuthActions.loginFailure({ error: error.message ?? 'Error al iniciar sesión' }))
-          )
+          catchError((error: HttpErrorResponse) => {
+            const message =
+              error?.error?.message ?? error?.message ?? 'Error al iniciar sesión'
+            return of(AuthActions.loginFailure({ error: message }))
+          })
         )
       )
     )

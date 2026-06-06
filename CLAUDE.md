@@ -6,14 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 npm start          # Dev server at http://localhost:4200
-npm run build      # Production build → dist/renta-internet-front/browser/
+npm run build      # Production build → dist/erp-frontend/browser/
 npm run watch      # Watch mode (dev config)
 npm test           # Unit tests via Karma + Jasmine
 ```
 
 To test PWA/offline mode locally:
 ```bash
-npx http-server dist/renta-internet-front/browser -p 8080
+npx http-server dist/erp-frontend/browser -p 8080
 ```
 
 No explicit lint script; use Angular's built-in TypeScript strict mode checks.
@@ -26,10 +26,10 @@ No explicit lint script; use Angular's built-in TypeScript strict mode checks.
 
 | Route | Feature | Guard |
 |---|---|---|
-| `/home` | Landing (public) | — |
 | `/auth/login` | Auth | — |
 | `/admin/dashboard` | Dashboard | AuthGuard |
 | `/admin/users` | User CRUD | AuthGuard + RoleGuard(ADMIN) |
+| `/admin/roles` | Role CRUD | AuthGuard + RoleGuard(ADMIN) |
 
 The `/admin/*` routes render inside `LayoutComponent` (sidebar + header shell).
 
@@ -47,7 +47,7 @@ The app has full offline support via three collaborating services:
 
 3. **`SyncService`** — on `window.online`, drains the pending ops queue by replaying HTTP mutations. After sync, emits `syncCompleted$` and clears the user cache to force a fresh fetch.
 
-**UserService** (`features/users/services/user.service.ts`) implements the offline-first read/write pattern: reads from API when online (caching to IDB), falls back to IDB when offline; writes queue to IDB when offline.
+**UserService** (`features/users/services/user.service.ts`) implements the offline-first read/write pattern: reads from API when online (caching to IDB), falls back to IDB when offline; writes queue to IDB when offline. Roles do not have offline support.
 
 ### HTTP Interceptor
 
@@ -76,7 +76,14 @@ All responses follow:
 { "statusCode": 200, "success": true, "message": "...", "data": {}, "errors": "" }
 ```
 
-Auth uses short-lived `accessToken` (15 min) + `refreshToken`. Full endpoint reference is in `API.md`.
+Paginated list responses return inside `data`:
+```json
+{ "data": [...], "meta": { "total": 50, "page": 1, "limit": 20, "pages": 3 } }
+```
+
+Auth uses short-lived `accessToken` (15 min) + `refreshToken` (7 days). 5 failed login attempts lock the account for 15 min — backend returns 403 with the remaining minutes in the message.
+
+User create/update payloads use `roleId` (UUID). The user response returns `role` as a plain string (role name).
 
 ### Code Conventions
 

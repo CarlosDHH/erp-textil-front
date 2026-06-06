@@ -10,8 +10,6 @@ import { AsyncPipe } from '@angular/common'
 import { logout } from '../../../features/auth/store/auth.actions'
 import { selectUser } from '../../../features/auth/store/auth.selectors'
 
-import { NetworkService } from '../../../core/services/network.service'
-
 interface NavItem {
   label: string
   icon: string
@@ -37,20 +35,14 @@ interface NavItem {
 })
 export class LayoutComponent {
   private store = inject(Store)
-  networkService = inject(NetworkService)
 
   user$ = this.store.select(selectUser)
   sidebarVisible = signal(false)
 
   navItems: NavItem[] = [
-    { label: 'Dashboard',    icon: 'pi pi-home',        route: '/admin/dashboard',  roles: ['ADMIN', 'OPERATOR'] },
-    { label: 'Usuarios',     icon: 'pi pi-users',       route: '/admin/users',      roles: ['ADMIN'] },
-    { label: 'Clientes',     icon: 'pi pi-user',        route: '/admin/customers',  roles: ['ADMIN', 'OPERATOR'] },
-    { label: 'Planes',       icon: 'pi pi-box',         route: '/admin/plans',      roles: ['ADMIN'] },
-    { label: 'Contratos',    icon: 'pi pi-file',        route: '/admin/contracts',  roles: ['ADMIN', 'OPERATOR'] },
-    { label: 'Pagos',        icon: 'pi pi-credit-card', route: '/admin/payments',   roles: ['ADMIN', 'OPERATOR'] },
-    { label: 'Comprobantes', icon: 'pi pi-receipt',     route: '/admin/receipts',     roles: ['ADMIN', 'OPERATOR'] },
-    { label: 'Landing CMS',  icon: 'pi pi-globe',       route: '/admin/landing-cms',  roles: ['ADMIN'] },
+    { label: 'Dashboard', icon: 'pi pi-home',   route: '/admin/dashboard', roles: ['ADMIN', 'OPERATOR'] },
+    { label: 'Usuarios',  icon: 'pi pi-users',  route: '/admin/users',     roles: ['ADMIN'] },
+    { label: 'Roles',     icon: 'pi pi-shield', route: '/admin/roles',     roles: ['ADMIN'] },
   ]
 
   toggleSidebar(): void {
