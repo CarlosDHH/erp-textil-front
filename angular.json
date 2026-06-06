@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "erp-frontend": {
+    "erp-textil-front": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -69,10 +69,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "erp-frontend:build:production"
+              "buildTarget": "erp-textil-front:build:production"
             },
             "development": {
-              "buildTarget": "erp-frontend:build:development"
+              "buildTarget": "erp-textil-front:build:development"
             }
           },
           "defaultConfiguration": "development"

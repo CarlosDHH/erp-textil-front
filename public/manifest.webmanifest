@@ -1,7 +1,7 @@
 {
-  "name": "ERP",
-  "short_name": "ERP",
-  "description": "Sistema ERP de gestión empresarial",
+  "name": "ERP Textil",
+  "short_name": "ERP Textil",
+  "description": "Sistema ERP de gestión para la industria textil",
   "display": "standalone",
   "scope": "/",
   "start_url": "/",

@@ -6,14 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 npm start          # Dev server at http://localhost:4200
-npm run build      # Production build → dist/erp-frontend/browser/
+npm run build      # Production build → dist/erp-textil-front/browser/
 npm run watch      # Watch mode (dev config)
 npm test           # Unit tests via Karma + Jasmine
 ```
 
 To test PWA/offline mode locally:
 ```bash
-npx http-server dist/erp-frontend/browser -p 8080
+npx http-server dist/erp-textil-front/browser -p 8080
 ```
 
 No explicit lint script; use Angular's built-in TypeScript strict mode checks.
