@@ -1,0 +1,62 @@
+<div class="p-6">
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-800">Inventario de Insumos</h1>
+      <p class="text-sm text-slate-500">Administra el registro y existencias de materias primas.</p>
+    </div>
+    <button pButton label="Nuevo Material" icon="pi pi-plus" routerLink="new" class="bg-blue-600 hover:bg-blue-700 border-none"></button>
+  </div>
+
+  <div class="card bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+    <div class="flex justify-between items-center mb-4">
+      <span class="p-input-icon-left w-full max-w-md">
+        <i class="pi pi-search"></i>
+        <input pInputText type="text" (input)="onSearch($event)" placeholder="Buscar por código, nombre o tipo..." class="w-full bg-gray-50 border-gray-300 rounded-lg" />
+      </span>
+    </div>
+
+    <p-table [value]="supplies" [lazy]="true" (onLazyLoad)="loadSupplies($event)" [paginator]="true" 
+             [rows]="limit" [totalRecords]="totalRecords" [loading]="loading" class="w-full">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Código</th>
+          <th>Nombre del Material</th>
+          <th>Categoría</th>
+          <th>Stock Actual</th>
+          <th>Stock Mínimo</th>
+          <th>U. Medida</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-supply>
+        <tr>
+          <td><span class="font-mono font-bold text-blue-600">{{ supply.code }}</span></td>
+          <td>{{ supply.name }}</td>
+          <td>
+            <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded text-xs font-medium uppercase">
+              {{ supply.type }}
+            </span>
+          </td>
+          <td>
+            <span [class]="supply.currentStock <= supply.minStock ? 'text-red-600 font-bold bg-red-50 px-2 py-1 rounded' : 'text-slate-700 font-semibold'">
+              {{ supply.currentStock }}
+            </span>
+          </td>
+          <td class="text-slate-500">{{ supply.minStock }}</td>
+          <td>{{ supply.unitMeasure }}</td>
+          <td>
+            <div class="flex justify-center gap-1">
+              <button pButton icon="pi pi-pencil" class="p-button-text p-button-warning p-button-sm" [routerLink]="['edit', supply.id]"></button>
+              <button pButton icon="pi pi-trash" class="p-button-text p-button-danger p-button-sm" (click)="deleteSupply(supply.id)"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="text-center p-4 text-slate-400">No se encontraron materiales registrados.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

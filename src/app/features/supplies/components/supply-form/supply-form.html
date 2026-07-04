@@ -1,0 +1,62 @@
+<div class="p-6 max-w-2xl mx-auto">
+  <div class="mb-6 flex items-center gap-4">
+    <button pButton icon="pi pi-arrow-left" class="p-button-text p-button-secondary hover:bg-gray-100" routerLink="/admin/supplies"></button>
+    <h1 class="text-2xl font-bold text-slate-800">{{ isEdit ? 'Editar' : 'Registrar Nuevo' }} Insumo</h1>
+  </div>
+
+  <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
+      
+      <div class="flex flex-col gap-2">
+        <label for="code" class="text-sm font-semibold text-gray-700">Código Identificador (Lote/Insumo)</label>
+        <input pInputText id="code" formControlName="code" placeholder="Ej. TEL-ALGO-01" class="w-full bg-gray-50 border-gray-200 rounded-xl" />
+        @if (form.get('code')?.invalid && form.get('code')?.touched) {
+          <small class="text-red-500 font-medium"><i class="pi pi-exclamation-circle"></i> El código es obligatorio.</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="name" class="text-sm font-semibold text-gray-700">Nombre del Material</label>
+        <input pInputText id="name" formControlName="name" placeholder="Ej. Tela Algodón Premium Sarga" class="w-full bg-gray-50 border-gray-200 rounded-xl" />
+        @if (form.get('name')?.invalid && form.get('name')?.touched) {
+          <small class="text-red-500 font-medium"><i class="pi pi-exclamation-circle"></i> El nombre es obligatorio.</small>
+        }
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex flex-col gap-2">
+          <label for="type" class="text-sm font-semibold text-gray-700">Categoría / Tipo</label>
+          <input pInputText id="type" formControlName="type" placeholder="Ej. telas, botones, hilos" class="w-full bg-gray-50 border-gray-200 rounded-xl" />
+          @if (form.get('type')?.invalid && form.get('type')?.touched) {
+            <small class="text-red-500 font-medium"><i class="pi pi-exclamation-circle"></i> Categoría obligatoria.</small>
+          }
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="unitMeasure" class="text-sm font-semibold text-gray-700">Unidad de Medida</label>
+          <input pInputText id="unitMeasure" formControlName="unitMeasure" placeholder="Ej. metros, piezas, kg" class="w-full bg-gray-50 border-gray-200 rounded-xl" />
+          @if (form.get('unitMeasure')?.invalid && form.get('unitMeasure')?.touched) {
+            <small class="text-red-500 font-medium"><i class="pi pi-exclamation-circle"></i> Unidad obligatoria.</small>
+          }
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex flex-col gap-2">
+          <label for="currentStock" class="text-sm font-semibold text-gray-700">Stock Inicial Disponible</label>
+          <input pInputText type="number" id="currentStock" formControlName="currentStock" class="w-full bg-gray-50 border-gray-200 rounded-xl" />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="minStock" class="text-sm font-semibold text-gray-700">Stock Mínimo (Alerta Crítica)</label>
+          <input pInputText type="number" id="minStock" formControlName="minStock" class="w-full bg-gray-50 border-gray-200 rounded-xl" />
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 mt-4 pt-6 border-t border-gray-100">
+        <button pButton type="button" label="Cancelar" class="p-button-text p-button-secondary rounded-xl hover:bg-gray-50" routerLink="/admin/supplies"></button>
+        <button pButton type="submit" [label]="isEdit ? 'Guardar Cambios' : 'Registrar Insumo'" [disabled]="form.invalid" class="bg-blue-600 hover:bg-blue-700 text-white border-none rounded-xl px-6"></button>
+      </div>
+    </form>
+  </div>
+</div>

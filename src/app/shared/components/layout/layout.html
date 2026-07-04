@@ -1,115 +1,117 @@
-<div class="app-shell">
+<div class="flex h-screen w-full bg-gray-100 font-sans">
 
-  <!-- Sidebar desktop -->
-  <aside class="sidebar desktop-sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-brand">
-        <div class="brand-icon">
-          <i class="pi pi-bolt"></i>
-        </div>
-        <span class="brand-name">ERP Textil</span>
+  <aside class="hidden md:flex flex-col w-64 bg-gray-900 text-white transition-all duration-300">
+    
+    <div class="flex items-center justify-center h-16 border-b border-gray-700">
+      <div class="flex items-center text-blue-500 mr-2">
+        <i class="pi pi-bolt text-2xl"></i>
       </div>
+      <span class="text-xl font-bold text-white tracking-wider">ERP Textil</span>
     </div>
 
-    <nav class="sidebar-nav">
-      @for (item of navItems; track item.route) {
-        <a
-          [routerLink]="item.route"
-          routerLinkActive="active"
-          class="nav-item"
-          pRipple
-        >
-          <i [class]="item.icon"></i>
-          <span>{{ item.label }}</span>
-        </a>
-      }
+    <nav class="flex-1 overflow-y-auto py-4">
+      <ul class="space-y-2 px-3">
+        @for (item of navItems; track item.route) {
+          <li>
+            <a 
+              [routerLink]="item.route" 
+              routerLinkActive="bg-blue-600 text-white" 
+              class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors cursor-pointer"
+              pRipple>
+              <i [class]="item.icon + ' mr-3 text-lg'"></i>
+              <span class="font-medium">{{ item.label }}</span>
+            </a>
+          </li>
+        }
+      </ul>
     </nav>
 
-    <div class="sidebar-footer">
-      @if (user$ | async; as user) {
-        <div class="user-info">
-          <p-avatar
-            [label]="getInitials(user.name, user.lastName)"
-            styleClass="user-avatar"
-            shape="circle"
-          />
-          <div class="user-details">
-            <span class="user-name">{{ user.name }} {{ user.lastName }}</span>
-            <span class="user-role">{{ user.role }}</span>
-          </div>
-        </div>
-      }
-      <button class="logout-btn" (click)="onLogout()" pRipple>
-        <i class="pi pi-sign-out"></i>
+    <div class="p-4 border-t border-gray-700">
+      <button class="flex items-center w-full px-4 py-2 text-gray-300 hover:text-red-400 transition-colors" (click)="onLogout()" pRipple>
+        <i class="pi pi-sign-out mr-3"></i>
         <span>Cerrar sesión</span>
       </button>
     </div>
   </aside>
 
-  <!-- Contenido principal -->
-  <div class="main-wrapper">
-
-    <!-- Topbar mobile -->
-    <header class="topbar">
-      <button class="hamburger" (click)="toggleSidebar()">
-        <i class="pi pi-bars"></i>
-      </button>
-      <div class="topbar-brand">
-        <div class="brand-icon-sm">
-          <i class="pi pi-bolt"></i>
-        </div>
-        <span class="brand-name-sm">ERP Textil</span>
+  <p-drawer [(visible)]="sidebarVisible" [style]="{width: '260px'}" styleClass="p-0 bg-gray-900 border-none">
+    <ng-template pTemplate="header">
+      <div class="flex items-center text-white">
+        <i class="pi pi-bolt text-blue-500 text-xl mr-2"></i>
+        <span class="text-xl font-bold tracking-wider">ERP Textil</span>
       </div>
-      @if (user$ | async; as user) {
-        <p-avatar
-          [label]="getInitials(user.name, user.lastName)"
-          styleClass="user-avatar-sm"
-          shape="circle"
-        />
-      }
+    </ng-template>
+
+    <nav class="flex-1 overflow-y-auto py-4">
+      <ul class="space-y-2 px-3">
+        @for (item of navItems; track item.route) {
+          <li>
+            <a 
+              [routerLink]="item.route" 
+              routerLinkActive="bg-blue-600 text-white" 
+              class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors cursor-pointer"
+              pRipple
+              (click)="sidebarVisible.set(false)">
+              <i [class]="item.icon + ' mr-3 text-lg'"></i>
+              <span class="font-medium">{{ item.label }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <ng-template pTemplate="footer">
+      <div class="p-4 border-t border-gray-700">
+        <button class="flex items-center w-full px-4 py-2 text-gray-300 hover:text-red-400 transition-colors" (click)="onLogout()" pRipple>
+          <i class="pi pi-sign-out mr-3"></i>
+          <span>Cerrar sesión</span>
+        </button>
+      </div>
+    </ng-template>
+  </p-drawer>
+
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    
+    <header class="flex items-center justify-between h-16 px-4 md:px-6 bg-white border-b border-gray-200 shadow-sm z-10">
+      
+      <div class="flex items-center">
+        <button (click)="toggleSidebar()" class="md:hidden mr-4 text-gray-600 hover:text-gray-900 transition-colors" pRipple>
+          <i class="pi pi-bars text-2xl"></i>
+        </button>
+
+        <span class="p-input-icon-left hidden sm:block">
+            <i class="pi pi-search"></i>
+            <input type="text" pInputText placeholder="Buscar en el sistema..." class="p-inputtext-sm w-48 md:w-72 rounded-full bg-gray-50 border-gray-300" />
+        </span>
+      </div>
+
+      <div class="flex items-center space-x-3 md:space-x-5">
+        
+        <button class="text-gray-500 hover:text-blue-600 relative transition-colors" pRipple>
+          <i class="pi pi-bell text-xl"></i>
+          <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+        </button>
+        
+        @if (user$ | async; as user) {
+          <div class="flex items-center border-l pl-3 md:pl-5 border-gray-200 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors">
+            <p-avatar 
+              [label]="getInitials(user.name, user.lastName)" 
+              shape="circle" 
+              styleClass="bg-blue-100 text-blue-700 font-bold">
+            </p-avatar>
+            
+            <div class="hidden md:flex flex-col ml-3">
+              <span class="text-sm font-bold text-gray-800 leading-none">{{ user.name }} {{ user.lastName }}</span>
+              <span class="text-xs text-gray-500 mt-1 capitalize">{{ user.role }}</span>
+            </div>
+            
+            <i class="pi pi-angle-down ml-3 text-gray-400 hidden md:block"></i>
+          </div>
+        }
+      </div>
     </header>
 
-    <!-- Sidebar mobile -->
-    <p-drawer
-      [(visible)]="sidebarVisible"
-      styleClass="mobile-sidebar"
-    >
-      <ng-template pTemplate="header">
-        <div class="sidebar-brand">
-          <div class="brand-icon">
-            <i class="pi pi-bolt"></i>
-          </div>
-          <span class="brand-name">ERP Textil</span>
-        </div>
-      </ng-template>
-
-      <nav class="sidebar-nav">
-        @for (item of navItems; track item.route) {
-          <a
-            [routerLink]="item.route"
-            routerLinkActive="active"
-            class="nav-item"
-            pRipple
-            (click)="sidebarVisible.set(false)"
-          >
-            <i [class]="item.icon"></i>
-            <span>{{ item.label }}</span>
-          </a>
-        }
-      </nav>
-
-      <ng-template pTemplate="footer">
-        <div class="mobile-drawer-footer">
-          <button class="logout-btn" (click)="onLogout()" pRipple>
-            <i class="pi pi-sign-out"></i>
-            <span>Cerrar sesión</span>
-          </button>
-        </div>
-      </ng-template>
-    </p-drawer>
-
-    <!-- Router outlet -->
-    <main class="main-content">
+    <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 md:p-6">
       <router-outlet />
     </main>
 

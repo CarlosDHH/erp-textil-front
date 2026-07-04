@@ -1,5 +1,10 @@
 import { Component, inject, signal } from '@angular/core'
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router'
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { InputTextModule } from 'primeng/inputtext';
+import { MenuModule } from 'primeng/menu';
+import { DrawerModule } from 'primeng/drawer';
 import { Store } from '@ngrx/store'
 import { Drawer } from 'primeng/drawer'
 import { ButtonModule } from 'primeng/button'
@@ -29,6 +34,11 @@ interface NavItem {
     AvatarModule,
     RippleModule,
     AsyncPipe,
+    CommonModule,
+    RouterModule,
+    InputTextModule,
+    MenuModule,
+    DrawerModule,
   ],
   templateUrl: './layout.html',
   styleUrl: './layout.scss',
@@ -43,6 +53,7 @@ export class LayoutComponent {
     { label: 'Dashboard', icon: 'pi pi-home',   route: '/admin/dashboard', roles: ['ADMIN', 'OPERATOR'] },
     { label: 'Usuarios',  icon: 'pi pi-users',  route: '/admin/users',     roles: ['ADMIN'] },
     { label: 'Roles',     icon: 'pi pi-shield', route: '/admin/roles',     roles: ['ADMIN'] },
+    { label: 'Insumos', icon: 'pi pi-box',   route: '/admin/supplies', roles: ['ADMIN', 'OPERATOR'] },
   ]
 
   toggleSidebar(): void {
