@@ -1,15 +1,18 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { SupplyService } from '../../services/supply';
+import { SelectModule } from 'primeng/select';
+import { InputNumber } from "primeng/inputnumber";
+import { InputNumberModule } from 'primeng/inputnumber';
 
 @Component({
   selector: 'app-supply-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, ButtonModule, InputTextModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, ButtonModule, InputTextModule, SelectModule, InputNumberModule, InputNumber],
   templateUrl: './supply-form.html'
 })
 export class SupplyFormComponent implements OnInit {
@@ -21,6 +24,40 @@ export class SupplyFormComponent implements OnInit {
   form!: FormGroup;
   isEdit = false;
   supplyId?: string;
+
+  types = [
+    {
+      label: 'Tela',
+      value: 'Tela'
+    },
+    {
+      label: 'Botones',
+      value: 'Botones'
+    },
+    {
+      label: 'Hilos',
+      value: 'Hilos'
+    },
+    {
+      label: 'Piezas',
+      value: 'Piezas'
+    }
+  ];
+
+  units = [
+    {
+      label: 'Metros',
+      value: 'Metros'
+    },
+    {
+      label: 'Kilogramos',
+      value: 'Kilogramos'
+    },
+    {
+      label: 'Piezas',
+      value: 'Piezas'
+    }
+  ];
 
   ngOnInit(): void {
     this.initForm();
@@ -34,13 +71,16 @@ export class SupplyFormComponent implements OnInit {
 
   initForm(): void {
     this.form = this.fb.group({
-      code: ['', [Validators.required]],
+      code: ['', [Validators.required, Validators.pattern(/^(?!-)(?!.*--)[A-Z0-9-]+(?<!-)$/)]],
       name: ['', [Validators.required]],
       type: ['', [Validators.required]],
       unitMeasure: ['', [Validators.required]],
       currentStock: [0, [Validators.required, Validators.min(0)]],
       minStock: [0, [Validators.required, Validators.min(0)]],
-    });
+    },
+  {
+    validators: this.stockValidator()
+  });
   }
 
   loadSupplyData(id: string): void {
@@ -71,5 +111,75 @@ export class SupplyFormComponent implements OnInit {
         }
       });
     }
+  }
+
+  onCodeInput(event: Event): void {
+
+    const input = event.target as HTMLInputElement;
+
+    let value = input.value.toUpperCase();
+
+    value = value.replace(/[^A-Z0-9-]/g, '');
+
+    value = value.replace(/--+/g, '-');
+
+    value = value.replace(/^-/, '');
+
+    value = value.replace(/-$/, '');
+
+    input.value = value;
+
+    this.form.get('code')?.setValue(value, {
+      emitEvent: false
+    });
+
+  }
+
+  onNameInput(event: Event): void {
+
+    const input = event.target as HTMLInputElement;
+
+    let value = input.value;
+
+    value = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ ]/g, '');
+
+    value = value.replace(/\s+/g, ' ');
+
+    value = value.trimStart();
+
+    value = value
+      .toLowerCase()
+      .replace(/\b\w/g, l => l.toUpperCase());
+
+    input.value = value;
+
+    this.form.get('name')?.setValue(value, {
+      emitEvent: false
+    });
+
+  }
+
+  stockValidator(): ValidatorFn {
+
+    return (group: AbstractControl) => {
+
+      const stock =
+        group.get('currentStock')?.value;
+
+      const min =
+        group.get('minStock')?.value;
+
+      if (min > stock) {
+
+        return {
+          minGreaterThanStock: true
+        };
+
+      }
+
+      return null;
+
+    };
+
   }
 }
