@@ -81,6 +81,10 @@ export class UserListComponent implements OnInit {
     this.router.navigate([`/admin/users/${id}/edit`])
   }
 
+  goToProfile(id: string): void {
+    this.router.navigate([`/admin/users/profile/${id}`])
+  }
+
   confirmDelete(user: User): void {
     this.confirmationService.confirm({
       message: `¿Estás seguro de eliminar a ${user.name} ${user.lastName}?`,

@@ -1,0 +1,21 @@
+<div class="chart-card">
+  <h3 class="chart-title">Insumos Registrados por Mes</h3>
+
+  <div class="chart-container">
+    @if (series.length) {
+      <ngx-charts-line-chart
+        [results]="series"
+        [xAxis]="true"
+        [yAxis]="true"
+        [showXAxisLabel]="true"
+        [showYAxisLabel]="true"
+        xAxisLabel="Mes"
+        yAxisLabel="Insumos"
+        [autoScale]="true"
+        [scheme]="colorScheme"
+      ></ngx-charts-line-chart>
+    } @else {
+      <p class="chart-empty">Sin datos disponibles</p>
+    }
+  </div>
+</div>

@@ -9,13 +9,13 @@ import { Supply } from '../models/supply.model';
 export class SupplyService {
   private http = inject(HttpClient);
   // Asegúrate de que esta URL coincida con tu environment
-  private apiUrl = 'http://localhost:3000/api/supply'; 
+  private apiUrl = 'http://localhost:3000/api/supply';
 
   getSupplies(page = 1, limit = 20, search = ''): Observable<any> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('limit', limit.toString());
-    
+
     if (search) {
       params = params.set('search', search);
     }

@@ -1,0 +1,138 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-lg;
+}
+
+.page-header {
+  @include flex-between;
+  align-self: stretch;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1e293b;
+  }
+}
+
+.profile-card {
+  background: white;
+  border-radius: 12px;
+  padding: $spacing-xl;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.state-message {
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  gap: $spacing-sm;
+  color: #94a3b8;
+  padding: $spacing-xl;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding-bottom: $spacing-lg;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+
+.profile-identity {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  min-width: 0;
+
+  h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+  }
+
+  .profile-role {
+    font-size: 13px;
+    font-weight: 500;
+    color: $secondary;
+    text-transform: capitalize;
+  }
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+
+  i {
+    font-size: 18px;
+    color: $primary;
+    width: 24px;
+    text-align: center;
+  }
+}
+
+.detail-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.detail-label {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.detail-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.profile-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-lg;
+  padding-top: $spacing-lg;
+  border-top: 1px solid #e2e8f0;
+
+  @include responsive(mobile) {
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+}
+
+.badge-item {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.badge-label {
+  font-size: 12px;
+  color: #94a3b8;
+}

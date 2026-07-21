@@ -1,7 +1,9 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection, isDevMode } from '@angular/core'
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection, isDevMode, LOCALE_ID } from '@angular/core'
 import { provideRouter, withInMemoryScrolling } from '@angular/router'
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async'
 import { provideHttpClient, withInterceptors } from '@angular/common/http'
+import { registerLocaleData } from '@angular/common'
+import localeEsMx from '@angular/common/locales/es-MX'
 import { provideStore } from '@ngrx/store'
 import { provideEffects } from '@ngrx/effects'
 import { provideStoreDevtools } from '@ngrx/store-devtools'
@@ -14,8 +16,11 @@ import { authReducer } from './features/auth/store/auth.reducer'
 import { AuthEffects } from './features/auth/store/auth.effects'
 import { authInterceptor } from './core/interceptors/auth.interceptor'
 
+registerLocaleData(localeEsMx, 'es-MX')
+
 export const appConfig: ApplicationConfig = {
   providers: [
+    { provide: LOCALE_ID, useValue: 'es-MX' },
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideAnimationsAsync(),

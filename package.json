@@ -22,6 +22,8 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/animations": "^20.3.26",
+    "@angular/cdk": "^20.2.14",
     "@angular/common": "^20.3.0",
     "@angular/compiler": "^20.3.0",
     "@angular/core": "^20.3.0",
@@ -34,6 +36,7 @@
     "@ngrx/store": "^20.1.0",
     "@ngrx/store-devtools": "^20.1.0",
     "@primeng/themes": "^20.4.0",
+    "@swimlane/ngx-charts": "^24.0.0",
     "primeicons": "^7.0.0",
     "primeng": "^20.4.0",
     "rxjs": "~7.8.0",

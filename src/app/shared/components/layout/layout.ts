@@ -1,8 +1,7 @@
 import { Component, inject, signal } from '@angular/core'
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router'
+import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router'
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { InputTextModule } from 'primeng/inputtext';
 import { MenuModule } from 'primeng/menu';
 import { DrawerModule } from 'primeng/drawer';
 import { Store } from '@ngrx/store'
@@ -36,7 +35,6 @@ interface NavItem {
     AsyncPipe,
     CommonModule,
     RouterModule,
-    InputTextModule,
     MenuModule,
     DrawerModule,
   ],
@@ -45,6 +43,7 @@ interface NavItem {
 })
 export class LayoutComponent {
   private store = inject(Store)
+  private router = inject(Router)
 
   user$ = this.store.select(selectUser)
   sidebarVisible = signal(false)
@@ -59,6 +58,11 @@ export class LayoutComponent {
   toggleSidebar(): void {
     this.sidebarVisible.update(v => !v)
   }
+goToOwnProfile(): void {
+    this.sidebarVisible.set(false)
+    this.router.navigate(['/admin/users/profile'])
+  }
+
 
   onLogout(): void {
     this.store.dispatch(logout())
@@ -68,3 +72,4 @@ export class LayoutComponent {
     return `${name.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
   }
 }
+

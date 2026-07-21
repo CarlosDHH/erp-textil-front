@@ -56,6 +56,13 @@
         <td>
           <div class="actions">
             <p-button
+              icon="pi pi-id-card"
+              [rounded]="true"
+              [text]="true"
+              severity="secondary"
+              (onClick)="goToProfile(user.id)"
+            />
+            <p-button
               icon="pi pi-pencil"
               [rounded]="true"
               [text]="true"
