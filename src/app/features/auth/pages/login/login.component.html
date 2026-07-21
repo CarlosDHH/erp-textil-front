@@ -1,14 +1,14 @@
 <div class="flex min-h-screen w-full bg-white font-sans overflow-hidden">
-  
+
   <aside class="hidden lg:flex flex-col justify-between w-1/2 bg-gray-900 p-12 relative overflow-hidden">
-    <div class="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl"></div>
-    <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl"></div>
-    
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl z-0 pointer-events-none"></div>
+    <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl z-0 pointer-events-none"></div>
+
     <div class="flex items-center space-x-3 z-10">
-      <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/30">
-        <i class="pi pi-bolt text-xl"></i>
+      <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-lg shadow-blue-600/20 p-1.5">
+        <img src="icons/logopantsys.svg" alt="PantSys" class="w-full h-full object-contain" />
       </div>
-      <span class="text-xl font-bold text-white tracking-wider">ERP Textil</span>
+      <span class="text-xl font-bold text-white tracking-wider">PantSys</span>
     </div>
 
     <div class="my-auto max-w-lg z-10 space-y-6">
@@ -16,27 +16,30 @@
         Gestiona tu negocio <br>
         <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">desde un solo lugar</span>
       </h2>
+      <p class="text-blue-300 text-base font-medium leading-relaxed">
+        PantSys es la plataforma todo en uno para administrar tu operación textil de principio a fin.
+      </p>
       <p class="text-gray-400 text-lg leading-relaxed">
         Panel de administración integral para el control de usuarios, roles, inventarios y operaciones del taller textil.
       </p>
     </div>
 
     <div class="text-gray-500 text-sm z-10">
-      &copy; 2026 ERP Textil. Todos los derechos reservados.
+      &copy; 2026 PantSys. Todos los derechos reservados.
     </div>
   </aside>
 
   <main class="flex flex-col justify-center items-center w-full lg:w-1/2 p-6 sm:p-12 bg-gray-50 lg:bg-white relative">
-    
-    <div class="flex items-center space-x-3 lg:hidden absolute top-8 left-8">
-      <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-blue-600 text-white">
-        <i class="pi pi-bolt text-lg"></i>
+
+    <div class="flex items-center space-x-3 lg:hidden absolute top-8 left-8 z-10">
+      <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-white border border-gray-100 shadow-sm p-1.5">
+        <img src="icons/logopantsys.svg" alt="PantSys" class="w-full h-full object-contain" />
       </div>
-      <span class="text-lg font-bold text-gray-900 tracking-wider">ERP Textil</span>
+      <span class="text-lg font-bold text-gray-900 tracking-wider">PantSys</span>
     </div>
 
     <div class="w-full max-w-md bg-white p-8 lg:p-0 rounded-2xl shadow-sm lg:shadow-none border border-gray-100 lg:border-none">
-      
+
       <div class="mb-8">
         <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight mb-2">¡Bienvenido de nuevo!</h1>
         <p class="text-gray-500 text-sm sm:text-base">Ingresa tus credenciales para acceder al sistema.</p>
@@ -52,18 +55,18 @@
       }
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5">
-        
+
         <div class="flex flex-col space-y-1.5">
           <label for="email" class="text-xs font-semibold text-gray-700 tracking-wider uppercase">Correo electrónico</label>
           <div class="relative flex items-center">
-            <i class="pi pi-envelope absolute left-4 text-gray-400 z-10"></i>
+            <i class="pi pi-envelope absolute left-4 text-gray-400 z-10 pointer-events-none"></i>
             <input
               pInputText
               id="email"
               type="email"
               formControlName="email"
               placeholder="correo@ejemplo.com"
-              class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all"
+              class="w-full !pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all"
               [class.border-red-400]="email?.invalid && email?.touched"
             />
           </div>
@@ -78,7 +81,7 @@
         <div class="flex flex-col space-y-1.5">
           <label for="password" class="text-xs font-semibold text-gray-700 tracking-wider uppercase">Contraseña</label>
           <div class="relative login-password-wrapper">
-            <i class="pi pi-lock absolute left-4 text-gray-400 top-1/2 -translate-y-1/2 z-10"></i>
+            <i class="pi pi-lock absolute left-4 text-gray-400 top-1/2 -translate-y-1/2 z-10 pointer-events-none"></i>
             <p-password
               id="password"
               formControlName="password"
@@ -86,7 +89,7 @@
               [feedback]="false"
               [toggleMask]="true"
               styleClass="w-full"
-              inputStyleClass="w-full pl-11 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all"
+              inputStyleClass="w-full !pl-12 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all"
               [class.invalid-password]="password?.invalid && password?.touched"
             />
           </div>

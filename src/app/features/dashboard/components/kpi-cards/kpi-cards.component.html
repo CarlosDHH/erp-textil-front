@@ -1,0 +1,22 @@
+<div class="kpi-grid">
+  @for (kpi of kpis; track kpi.id) {
+    <div class="kpi-card" [class]="'kpi-card--' + kpi.status">
+      <div class="kpi-icon">
+        <i class="pi" [class]="'pi-' + kpi.icon"></i>
+      </div>
+
+      <div class="kpi-body">
+        <span class="kpi-label">{{ kpi.label }}</span>
+        <span class="kpi-value">
+          {{ kpi.value | number }}<span class="kpi-unit">{{ kpi.unit ? ' ' + kpi.unit : '' }}</span>
+        </span>
+
+        @if (kpi.helperText) {
+          <span class="kpi-helper">{{ kpi.helperText }}</span>
+        }
+      </div>
+    </div>
+  } @empty {
+    <p class="kpi-empty">No hay métricas disponibles.</p>
+  }
+</div>

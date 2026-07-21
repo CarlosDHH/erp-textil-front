@@ -1,0 +1,17 @@
+<div class="chart-card">
+  <h3 class="chart-title">Distribución de Insumos por Tipo</h3>
+
+  <div class="chart-container">
+    @if (data.length) {
+      <ngx-charts-pie-chart
+        [results]="data"
+        [labels]="true"
+        [doughnut]="true"
+        [arcWidth]="0.4"
+        [scheme]="colorScheme"
+      ></ngx-charts-pie-chart>
+    } @else {
+      <p class="chart-empty">Sin datos disponibles</p>
+    }
+  </div>
+</div>

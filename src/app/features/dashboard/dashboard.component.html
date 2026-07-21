@@ -1,30 +1,66 @@
 @if (user$ | async; as user) {
   <div class="welcome-container">
+    <div class="welcome-row">
 
-    <div class="welcome-card">
-      <p-avatar
-        [label]="getInitials(user.name, user.lastName)"
-        styleClass="welcome-avatar"
-        shape="circle"
-        size="xlarge"
-      />
-      <div class="welcome-info">
-        <h1>Hola, {{ user.name }} {{ user.lastName }}</h1>
-        <p class="welcome-role">{{ user.role }}</p>
-        <p class="welcome-email">{{ user.email }}</p>
+      <div class="welcome-card">
+        <p-avatar
+          [label]="getInitials(user.name, user.lastName)"
+          styleClass="welcome-avatar"
+          shape="circle"
+          size="xlarge"
+        />
+        <div class="welcome-info">
+          <h1>Hola, {{ user.name }} {{ user.lastName }}</h1>
+          <p class="welcome-role">{{ user.role }}</p>
+          <p class="welcome-email">{{ user.email }}</p>
+        </div>
       </div>
-    </div>
 
-    <div class="quick-links">
-      <a routerLink="/admin/users" class="link-card">
-        <i class="pi pi-users"></i>
-        <span>Usuarios</span>
-      </a>
-      <a routerLink="/admin/roles" class="link-card">
-        <i class="pi pi-shield"></i>
-        <span>Roles</span>
-      </a>
-    </div>
+      <div class="summary-card">
+        <div class="summary-header">
+          <i class="pi pi-calendar"></i>
+          <h2>Resumen del día</h2>
+        </div>
+        <p class="summary-date">{{ currentDate | date: 'EEEE dd/MM/yyyy' }}</p>
 
+        @if (summary$ | async; as summary) {
+          @if (summary.dailySummary.length > 0) {
+            <ul class="summary-list">
+              @for (item of summary.dailySummary; track item.name) {
+                <li>
+                  <i class="pi pi-box"></i>
+                  <span>{{ item.quantity }} {{ item.unit }} de {{ item.name }}</span>
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="summary-empty">No hay movimientos hoy.</p>
+          }
+        }
+      </div>
+
+    </div>
   </div>
 }
+
+<section class="dashboard-metrics">
+  @if (summary$ | async; as summary) {
+    <app-kpi-cards [kpis]="summary.kpis" />
+
+    <div class="charts-grid">
+      <app-supplies-trend-chart [series]="summary.suppliesTrend" />
+      <app-supply-distribution-chart [data]="summary.supplyDistribution" />
+      <app-users-by-role-chart [data]="summary.usersByRole" />
+    </div>
+  } @else if (errorMessage()) {
+    <div class="dashboard-error">
+      <i class="pi pi-exclamation-triangle"></i>
+      <span>{{ errorMessage() }}</span>
+    </div>
+  } @else {
+    <div class="dashboard-loading">
+      <i class="pi pi-spin pi-spinner"></i>
+      <span>Cargando métricas...</span>
+    </div>
+  }
+</section>

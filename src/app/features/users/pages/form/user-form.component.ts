@@ -1,6 +1,9 @@
 import { Component, inject, OnInit, signal } from '@angular/core'
+import { toSignal } from '@angular/core/rxjs-interop'
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms'
 import { Router, ActivatedRoute } from '@angular/router'
+import { AsyncPipe } from '@angular/common'
+import { Observable, map, shareReplay } from 'rxjs'
 import { InputTextModule } from 'primeng/inputtext'
 import { InputMaskModule } from 'primeng/inputmask'
 import { SelectModule } from 'primeng/select'
@@ -10,13 +13,14 @@ import { PasswordModule } from 'primeng/password'
 import { MessageService } from 'primeng/api'
 
 import { UserService } from '../../services/user.service'
-import { RoleService } from '../../../roles/services/role.service'
+import { RoleService, Role } from '../../../roles/services/role.service'
 
 @Component({
   selector: 'app-user-form',
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    AsyncPipe,
     InputTextModule,
     SelectModule,
     ButtonModule,
@@ -40,7 +44,18 @@ export class UserFormComponent implements OnInit {
   isEdit = signal(false)
   userId = signal<string | null>(null)
 
-  roles = signal<{ label: string; value: string }[]>([])
+  /**
+   * Roles disponibles para el selector, excluyendo estrictamente los inactivos.
+   * El filtrado ocurre en el frontend vía RxJS `map` (no se muta el arreglo original
+   * devuelto por el backend); el HTML consume este observable con el pipe `async`.
+   */
+  readonly activeRoles$: Observable<Role[]> = this.roleService.getAll(1, 100).pipe(
+    map((res) => res.data.data.filter((role) => role.isActive === true)),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  )
+
+  /** Snapshot síncrono de `activeRoles$`, usado únicamente para el match de edición (no en el template). */
+  private readonly activeRoles = toSignal(this.activeRoles$, { initialValue: [] as Role[] })
 
   statusOptions = [
     { label: 'Activo', value: true },
@@ -58,8 +73,6 @@ export class UserFormComponent implements OnInit {
   })
 
   ngOnInit(): void {
-    this.loadRoles()
-
     const id = this.route.snapshot.paramMap.get('id')
     if (id) {
       this.isEdit.set(true)
@@ -70,31 +83,19 @@ export class UserFormComponent implements OnInit {
     }
   }
 
-  private loadRoles(): void {
-    this.roleService.getAll(1, 100).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.roles.set(
-            res.data.data.map((r) => ({ label: r.name, value: r.id }))
-          )
-        }
-      },
-    })
-  }
-
   loadUser(id: string): void {
     this.loading.set(true)
     this.userService.getById(id).subscribe({
       next: (res) => {
         if (res.success) {
           const { name, lastName, email, phone, role, active } = res.data
-          const matchedRole = this.roles().find((r) => r.label === role)
+          const matchedRole = this.activeRoles().find((r) => r.name === role)
           this.form.patchValue({
             name,
             lastName,
             email,
             phone,
-            roleId: matchedRole?.value ?? '',
+            roleId: matchedRole?.id ?? '',
             active,
           })
         }

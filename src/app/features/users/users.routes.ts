@@ -17,6 +17,16 @@ export const usersRoutes: Routes = [
     data: { roles: ['admin'] },
   },
   {
+    path: 'profile',
+    loadComponent: () =>
+      import('./pages/profile/user-profile.component').then((m) => m.UserProfileComponent),
+  },
+  {
+    path: 'profile/:id',
+    loadComponent: () =>
+      import('./pages/profile/user-profile.component').then((m) => m.UserProfileComponent),
+  },
+  {
     path: ':id/edit',
     loadComponent: () =>
       import('./pages/form/user-form.component').then((m) => m.UserFormComponent),
@@ -24,3 +34,4 @@ export const usersRoutes: Routes = [
     data: { roles: ['admin'] },
   },
 ]
+

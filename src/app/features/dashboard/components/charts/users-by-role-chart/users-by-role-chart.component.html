@@ -1,0 +1,21 @@
+<div class="chart-card">
+  <h3 class="chart-title">Usuarios por Rol</h3>
+
+  <div class="chart-container">
+    @if (data.length) {
+      <ngx-charts-bar-vertical
+        [results]="data"
+        [xAxis]="true"
+        [yAxis]="true"
+        [showXAxisLabel]="true"
+        [showYAxisLabel]="true"
+        xAxisLabel="Rol"
+        yAxisLabel="Usuarios"
+        [roundDomains]="true"
+        [scheme]="colorScheme"
+      ></ngx-charts-bar-vertical>
+    } @else {
+      <p class="chart-empty">Sin datos disponibles</p>
+    }
+  </div>
+</div>
