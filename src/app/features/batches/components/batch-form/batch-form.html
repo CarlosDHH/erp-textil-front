@@ -1,0 +1,89 @@
+<div class="p-6 max-w-2xl mx-auto">
+  <div class="mb-6 flex items-center gap-4">
+    <button pButton icon="pi pi-arrow-left" class="p-button-text p-button-secondary hover:bg-gray-100" routerLink="/admin/batches"></button>
+    <h1 class="text-2xl font-bold text-slate-800">{{ isEdit ? 'Editar' : 'Registrar Nuevo' }} Lote</h1>
+  </div>
+
+  <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
+      
+      <div class="flex flex-col gap-2">
+        <label for="code" class="text-sm font-semibold text-gray-700">Número de lote</label>
+        <input pInputText id="batchNumber" formControlName="batchNumber" autocomplete="off" (copy)="$event.preventDefault()" (paste)="$event.preventDefault()" (cut)="$event.preventDefault()" class="w-full bg-gray-50 border-gray-200 rounded-xl" />
+        @if (form.get('batchNumber')?.invalid && form.get('batchNumber')?.touched) {
+          <small class="text-red-500 font-medium"><i class="pi pi-exclamation-circle"></i> El número de lote es obligatorio.</small>
+        }
+        @if(form.get('batchNumber')?.errors?.['pattern']){
+        <small class="text-red-500">
+          Solo se permiten letras mayúsculas, números y un guion (-).
+        </small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="name" class="text-sm font-semibold text-gray-700">Insumo</label>
+        <p-select [options]="supplies" optionLabel="name" optionValue="id" formControlName="supplyId" placeholder="Seleccione un insumo"></p-select>
+        @if (form.get('supplyId')?.invalid && form.get('supplyId')?.touched) {
+          <small class="text-red-500 font-medium"><i class="pi pi-exclamation-circle"></i> El nombre del insumo es obligatorio.</small>
+        }
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex flex-col gap-2">
+          <label for="type" class="text-sm font-semibold text-gray-700">Proveedor</label>
+          <p-select [options]="suppliers" optionLabel="name" optionValue="id" formControlName="supplierId" placeholder="Seleccione un proveedor"></p-select>
+          @if (form.get('supplyId')?.invalid && form.get('supplyId')?.touched) {
+            <small class="text-red-500 font-medium"><i class="pi pi-exclamation-circle"></i> Proveedor obligatorio.</small>
+          }
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-semibold text-gray-700">
+            Color
+          </label>
+          <input pInputText formControlName="color" placeholder="Ej. Azul Marino"
+            class="w-full bg-gray-50 border-gray-200 rounded-xl" />
+          @if(form.get('color')?.invalid &&
+          form.get('color')?.touched){
+          <small class="text-red-500">
+            El color es obligatorio.
+          </small>
+          }
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex flex-col gap-2">
+          <label for="currentStock" class="text-sm font-semibold text-gray-700">Cantidad Inicial</label>
+          <p-inputNumber inputmode="numeric" [min]="0" [useGrouping]="false" id="currentStock" formControlName="initialQuantity" class="w-full bg-gray-50 border-gray-200 rounded-xl" />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="minStock" class="text-sm font-semibold text-gray-700">Ubicación</label>
+          <input pInputText formControlName="warehouseLocation">
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="name" class="text-sm font-semibold text-gray-700">Fecha</label>
+        <input type="date" id="date" formControlName="entryDate" class="w-full bg-gray-50 border-gray-200 rounded-xl" />
+        @if (form.get('entryDate')?.invalid && form.get('entryDate')?.touched) {
+          <small class="text-red-500 font-medium"><i class="pi pi-exclamation-circle"></i> El nombre del insumo es obligatorio.</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="name" class="text-sm font-semibold text-gray-700">Observaciones</label>
+        <textarea rows="4" pInputTextarea formControlName="notes"></textarea>
+        @if (form.get('notes')?.invalid && form.get('notes')?.touched) {
+          <small class="text-red-500 font-medium"><i class="pi pi-exclamation-circle"></i> El nombre del insumo es obligatorio.</small>
+        }
+      </div>
+
+      <div class="flex justify-end gap-3 mt-4 pt-6 border-t border-gray-100">
+        <button pButton type="button" label="Cancelar" class="p-button-text p-button-secondary rounded-xl hover:bg-gray-50" routerLink="/admin/batches"></button>
+        <button pButton type="submit" [label]="isEdit ? 'Guardar Cambios' : 'Registrar Lote'" [loading]="saving" [disabled]="form.invalid || saving"  class="bg-blue-600 hover:bg-blue-700 text-white border-none rounded-xl px-6"></button>
+      </div>
+    </form>
+  </div>
+</div>

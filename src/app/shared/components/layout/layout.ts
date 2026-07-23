@@ -54,6 +54,8 @@ export class LayoutComponent {
     { label: 'Usuarios',  icon: 'pi pi-users',  route: '/admin/users',     roles: ['ADMIN'] },
     { label: 'Roles',     icon: 'pi pi-shield', route: '/admin/roles',     roles: ['ADMIN'] },
     { label: 'Insumos', icon: 'pi pi-box',   route: '/admin/supplies', roles: ['ADMIN', 'OPERATOR'] },
+    { label: 'Lotes', icon: 'pi pi-box',   route: '/admin/batches', roles: ['ADMIN', 'OPERATOR'] },
+    { label: 'Proveedores', icon: 'pi pi-box',   route: '/admin/suppliers', roles: ['ADMIN', 'OPERATOR'] },
   ]
 
   toggleSidebar(): void {

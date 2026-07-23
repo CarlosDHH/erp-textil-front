@@ -38,6 +38,15 @@ export const routes: Routes = [
         loadChildren: () =>
         import('./features/supplies/supplies.routes').then((m) => m.suppliesRoutes),
       },
+      {
+        path: 'batches',
+        loadChildren: () => import('./features/batches/batch.routes').then(m => m.batchRoutes)
+      },
+      {
+        path: 'suppliers',
+        loadChildren: () =>
+        import('./features/supplier/supplier.routes').then((m) => m.supplierRoutes),
+      },
     ],
   },
   {

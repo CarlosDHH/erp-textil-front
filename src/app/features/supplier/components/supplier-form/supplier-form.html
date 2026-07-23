@@ -1,0 +1,88 @@
+<div class="p-6 max-w-3xl mx-auto">
+  <div class="mb-6 flex items-center gap-4">
+    <button pButton icon="pi pi-arrow-left" class="p-button-text p-button-secondary" routerLink="/admin/suppliers">
+    </button>
+    <h1 class="text-2xl font-bold text-slate-800">
+      {{ isEdit ? 'Editar Proveedor' : 'Registrar Proveedor' }}
+    </h1>
+  </div>
+
+  <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
+      <div class="flex flex-col gap-2">
+        <label class="font-semibold">
+          Nombre del proveedor
+        </label>
+        <input pInputText formControlName="name" placeholder="Ej. Textiles Hidalgo S.A. de C.V."
+          (input)="onNameInput($event)" />
+        @if(form.get('name')?.invalid && form.get('name')?.touched){
+        <small class="text-red-500">
+          El nombre es obligatorio.
+        </small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label class="font-semibold">
+          RFC
+        </label>
+        <input pInputText formControlName="rfc" placeholder="Ej. ABC123456XYZ" maxlength="13"
+          (input)="onRfcInput($event)" />
+        @if(form.get('rfc')?.errors?.['pattern']){
+        <small class="text-red-500">
+          RFC inválido.
+        </small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label class="font-semibold">
+          Persona de contacto
+        </label>
+        <input pInputText formControlName="contactName" placeholder="Ej. Juan Pérez" (input)="onContactInput($event)" />
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex flex-col gap-2">
+          <label class="font-semibold">
+            Teléfono
+          </label>
+          <input pInputText formControlName="phone" maxlength="10" placeholder="7711234567"
+            (input)="onPhoneInput($event)" />
+          @if(form.get('phone')?.errors?.['pattern']){
+          <small class="text-red-500">
+            Solo se permiten 10 números.
+          </small>
+          }
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label class="font-semibold">
+            Correo electrónico
+          </label>
+          <input pInputText formControlName="email" placeholder="correo@empresa.com" />
+          @if(form.get('email')?.errors?.['email']){
+          <small class="text-red-500">
+            Correo inválido.
+          </small>
+          }
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <input type="checkbox" formControlName="active" class="w-4 h-4">
+        <label>
+          Proveedor activo
+        </label>
+      </div>
+
+      <div class="flex justify-end gap-3 pt-6 border-t">
+        <button pButton type="button" label="Cancelar" class="p-button-text" routerLink="/admin/suppliers">
+        </button>
+        <button pButton type="submit" [loading]="saving" [disabled]="form.invalid || saving"
+          [label]="isEdit ? 'Guardar Cambios' : 'Registrar Proveedor'">
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

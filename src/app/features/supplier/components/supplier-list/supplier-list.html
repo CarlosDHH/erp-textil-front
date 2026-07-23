@@ -1,0 +1,42 @@
+<div class="p-6">
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-800">Lista de proveedores</h1>
+      <p class="text-sm text-slate-500">Administra el registro y existencias de materias primas.</p>
+    </div>
+    <button pButton label="Nuevo proveedor" icon="pi pi-plus" routerLink="new" class="bg-blue-600 hover:bg-blue-700 border-none"></button>
+  </div>
+
+  <div class="card bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+    <div class="flex justify-between items-center mb-4">
+      <span class="p-input-icon-left w-full max-w-md">
+        <i class="pi pi-search"></i>
+        <input pInputText type="text" (input)="onSearch($event)" placeholder="Buscar por código, nombre o tipo..." class="w-full bg-gray-50 border-gray-300 rounded-lg" />
+      </span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+  @for (supplier of suppliers; track supplier.id) {
+
+    <app-supplier-card
+      [supplier]="supplier"
+      (delete)="deleteSupplier($event)">
+    </app-supplier-card>
+
+  }
+  @if (!loading && suppliers.length === 0) {
+
+<div class="text-center py-16 text-slate-500">
+
+    <i class="pi pi-inbox text-5xl mb-4"></i>
+
+    <p>No hay materiales registrados.</p>
+
+</div>
+
+}
+
+</div>
+  </div>
+</div>

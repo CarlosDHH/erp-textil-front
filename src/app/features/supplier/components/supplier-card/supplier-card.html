@@ -1,0 +1,103 @@
+<div class="bg-white rounded-2xl shadow-sm border border-gray-200/80 p-5 flex flex-col h-full hover:shadow-md transition-shadow duration-200">
+
+  <!-- Encabezado -->
+  <div class="flex justify-between items-start mb-4">
+
+    <div>
+      <h3
+        class="text-lg font-bold text-slate-800"
+        [title]="supplier.name">
+
+        {{ supplier.name }}
+
+      </h3>
+
+      <small class="text-slate-500">
+
+        {{ supplier.rfc || 'Sin RFC registrado' }}
+
+      </small>
+
+    </div>
+
+    <p-tag
+      [severity]="supplier.active ? 'success' : 'danger'"
+      [value]="supplier.active ? 'Activo' : 'Inactivo'">
+    </p-tag>
+
+  </div>
+
+  <!-- Información -->
+  <div class="space-y-3 flex-grow">
+
+    <div class="flex items-center gap-2">
+
+      <i class="pi pi-user text-blue-500"></i>
+
+      <span class="text-sm text-slate-700">
+
+        {{ supplier.contactName || 'Sin contacto registrado' }}
+
+      </span>
+
+    </div>
+
+    <div class="flex items-center gap-2">
+
+      <i class="pi pi-phone text-green-500"></i>
+
+      <span class="text-sm text-slate-700">
+
+        {{ supplier.phone || 'Sin teléfono' }}
+
+      </span>
+
+    </div>
+
+    <div class="flex items-center gap-2">
+
+      <i class="pi pi-envelope text-orange-500"></i>
+
+      <span class="text-sm text-slate-700 break-all">
+
+        {{ supplier.email || 'Sin correo electrónico' }}
+
+      </span>
+
+    </div>
+
+  </div>
+
+  <!-- Fecha -->
+  <div class="mt-5 pt-4 border-t border-slate-100">
+
+    <small class="text-slate-500">
+
+      Registrado:
+      {{ supplier.createdAt | date:'dd/MM/yyyy' }}
+
+    </small>
+
+  </div>
+
+  <!-- Botones -->
+  <div class="flex gap-2 mt-5">
+
+    <button
+      pButton
+      icon="pi pi-pencil"
+      label="Editar"
+      class="p-button-outlined p-button-sm flex-1 text-blue-600 border-blue-200 hover:bg-blue-50"
+      [routerLink]="['/admin/suppliers/edit', supplier.id]">
+    </button>
+
+    <button
+      pButton
+      icon="pi pi-trash"
+      class="p-button-outlined p-button-danger p-button-sm w-10"
+      (click)="onDelete()">
+    </button>
+
+  </div>
+
+</div>

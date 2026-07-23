@@ -9,9 +9,20 @@
       
       <div class="flex flex-col gap-2">
         <label for="code" class="text-sm font-semibold text-gray-700">Código Identificador (Lote/Insumo)</label>
-        <input pInputText id="code" formControlName="code" maxlength="30" autocomplete="off" (input)="onCodeInput($event)" placeholder="Ej. TEL-ALGO-01" class="w-full bg-gray-50 border-gray-200 rounded-xl" />
+        <input pInputText id="code" formControlName="code" autocomplete="off" (input)="onCodeInput($event)" (copy)="$event.preventDefault()" (paste)="$event.preventDefault()" (cut)="$event.preventDefault()" [placeholder]="codePlaceholder" class="w-full bg-gray-50 border-gray-200 rounded-xl" />
+        <small class="text-gray-500">
+        
+          Formato esperado:
+          <strong>{{ codePlaceholder }}</strong>
+        
+        </small>
         @if (form.get('code')?.invalid && form.get('code')?.touched) {
           <small class="text-red-500 font-medium"><i class="pi pi-exclamation-circle"></i> El código es obligatorio.</small>
+        }
+        @if(form.get('code')?.errors?.['pattern']){
+        <small class="text-red-500">
+          Solo se permiten letras mayúsculas, números y un guion (-).
+        </small>
         }
       </div>
 
@@ -26,7 +37,7 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="flex flex-col gap-2">
           <label for="type" class="text-sm font-semibold text-gray-700">Categoría / Tipo</label>
-          <p-select [options]="types" optionLabel="label" optionValue="value" formControlName="type">
+          <p-select [options]="types" optionLabel="label" optionValue="value" formControlName="type" (onChange)="onCategoryChange($event.value)">
           </p-select>
           @if (form.get('type')?.invalid && form.get('type')?.touched) {
             <small class="text-red-500 font-medium"><i class="pi pi-exclamation-circle"></i> Categoría obligatoria.</small>
@@ -66,7 +77,7 @@
 
       <div class="flex justify-end gap-3 mt-4 pt-6 border-t border-gray-100">
         <button pButton type="button" label="Cancelar" class="p-button-text p-button-secondary rounded-xl hover:bg-gray-50" routerLink="/admin/supplies"></button>
-        <button pButton type="submit" [label]="isEdit ? 'Guardar Cambios' : 'Registrar Insumo'" [disabled]="form.invalid" class="bg-blue-600 hover:bg-blue-700 text-white border-none rounded-xl px-6"></button>
+        <button pButton type="submit" [label]="isEdit ? 'Guardar Cambios' : 'Registrar Insumo'" [loading]="saving" [disabled]="form.invalid || saving"  class="bg-blue-600 hover:bg-blue-700 text-white border-none rounded-xl px-6"></button>
       </div>
     </form>
   </div>
