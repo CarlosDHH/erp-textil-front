@@ -4,92 +4,78 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, ValidatorFn, A
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { SupplyService } from '../../services/supply';
+import { BatchService } from '../../services/batch.service';
+import { SupplyService } from '../../../supplies/services/supply';
 import { SelectModule } from 'primeng/select';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { TextareaModule } from 'primeng/textarea';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 
 @Component({
-  selector: 'app-supply-form',
+  selector: 'app-batch-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, ButtonModule, InputTextModule, SelectModule, InputNumberModule, ToastModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, ButtonModule, InputTextModule, SelectModule, InputNumberModule, ToastModule, TextareaModule],
   providers: [MessageService],
-  templateUrl: './supply-form.html'
+  templateUrl: './batch-form.html'
 })
-export class SupplyFormComponent implements OnInit {
+export class BatchFormComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private supplyService = inject(SupplyService);
+  private batchService = inject(BatchService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private messageService = inject(MessageService);
+  private supplyService = inject(SupplyService);
 
   form!: FormGroup;
   isEdit = false;
-  supplyId?: string;
+  batchId?: string;
   codePlaceholder = 'Seleccione una categoría';
   saving = false;
 
-  types = [
-    {
-      label: 'Tela',
-      value: 'Tela'
-    },
-    {
-      label: 'Botones',
-      value: 'Botones'
-    },
-    {
-      label: 'Hilos',
-      value: 'Hilos'
-    },
-    {
-      label: 'Piezas',
-      value: 'Piezas'
-    }
-  ];
+  supplies: any[] = [];
 
-  units = [
+  suppliers = [
+
     {
-      label: 'Metros',
-      value: 'Metros'
+      id: 1,
+      name: 'Textiles Hidalgo'
     },
     {
-      label: 'Kilogramos',
-      value: 'Kilogramos'
+      id: 2,
+      name: 'Hilaturas México'
     },
     {
-      label: 'Piezas',
-      value: 'Piezas'
+      id: 3,
+      name: 'Distribuidora del Centro'
     }
   ];
 
   ngOnInit(): void {
     this.initForm();
-    this.supplyId = this.route.snapshot.params['id'];
-    
-    if (this.supplyId) {
+    this.loadSupplies();
+    this.batchId = this.route.snapshot.params['id'];
+    if (this.batchId) {
       this.isEdit = true;
-      this.loadSupplyData(this.supplyId);
+      this.loadBatchData(this.batchId);
     }
   }
 
   initForm(): void {
     this.form = this.fb.group({
-      code: ['', [Validators.required, Validators.pattern(/^(?!-)(?!.*--)[A-Z0-9-]+(?<!-)$/), Validators.maxLength(20)]],
-      name: ['', [Validators.required, Validators.maxLength(80)]],
-      type: ['', [Validators.required]],
-      unitMeasure: ['', [Validators.required]],
-      currentStock: [0, [Validators.required, Validators.min(0)]],
-      minStock: [0, [Validators.required, Validators.min(0)]],
-    },
-  {
-    validators: this.stockValidator()
-  });
+      batchNumber: ['',[Validators.required,Validators.pattern(/^(?!-)(?!.*--)[A-Z0-9-]+(?<!-)$/),Validators.maxLength(30)]],
+      supplyId: [null,Validators.required],
+      supplierId: [null,Validators.required],
+      initialQuantity: [0,[Validators.required,Validators.min(1)]],
+      color: ['',[Validators.required,Validators.maxLength(40)]],
+      warehouseLocation: ['',[Validators.required,Validators.maxLength(60)]],
+      entryDate: ['',Validators.required],
+      notes: ['',Validators.maxLength(250)]
+    });
   }
 
-  loadSupplyData(id: string): void {
-    this.supplyService.getSupplyById(id).subscribe({
+  loadBatchData(id: string): void {
+    this.batchService.getBatchById(id).subscribe({
       next: (res) => {
         if (res.success) {
           this.form.patchValue(res.data);
@@ -101,11 +87,12 @@ export class SupplyFormComponent implements OnInit {
   onSubmit(): void {
     if (this.form.invalid) return;
 
-    const supplyData = this.form.value;
+    const batchData = this.form.value;
+    console.log('Datos enviados:', batchData);
     this.saving = true;
 
-    if (this.isEdit && this.supplyId) {
-      this.supplyService.updateSupply(this.supplyId, supplyData).subscribe({
+    if (this.isEdit && this.batchId) {
+      this.batchService.updateBatch(this.batchId, batchData).subscribe({
         next: (res) => {
           this.saving = false;
           if (res.success)
@@ -114,19 +101,20 @@ export class SupplyFormComponent implements OnInit {
               summary: 'Actualización',
               detail: 'Los datos fueron actualizados.'
             });
-            this.router.navigate(['/admin/supplies']);
+            this.router.navigate(['/admin/batches']);
         },
-        error: () => {
+        error: (error) => {
           this.saving = false;
+          console.error(error);
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'No fue posible actualizar el insumo.'
+            detail: error?.error?.message ?? 'No fue posible registrar el lote.'
           });
         }
       });
     } else {
-      this.supplyService.createSupply(supplyData).subscribe({
+      this.batchService.createBatch(batchData).subscribe({
         next: (res) => {
           this.saving = false;
           if (res.success)
@@ -135,7 +123,7 @@ export class SupplyFormComponent implements OnInit {
               summary: 'Registro exitoso',
               detail: 'El insumo fue registrado correctamente.'
             });
-            this.router.navigate(['/admin/supplies']);
+            this.router.navigate(['/admin/batches']);
         },
         error: () => {
           this.saving = false;
@@ -150,99 +138,42 @@ export class SupplyFormComponent implements OnInit {
   }
 
   onCodeInput(event: Event): void {
-
     const input = event.target as HTMLInputElement;
-
     let value = input.value.toUpperCase();
-
     value = value.replace(/[^A-Z0-9-]/g, '');
-
     value = value.replace(/--+/g, '-');
-
     value = value.replace(/^-/, '');
-
     value = value.replace(/-$/, '');
-
     input.value = value;
-
     this.form.get('code')?.setValue(value, {
       emitEvent: false
     });
-
   }
 
   onNameInput(event: Event): void {
-
     const input = event.target as HTMLInputElement;
-
     let value = input.value;
-
     value = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ ]/g, '');
-
     value = value.replace(/\s+/g, ' ');
-
     value = value.trimStart();
-
     value = value
       .toLowerCase()
       .replace(/\b\w/g, l => l.toUpperCase());
-
     input.value = value;
-
     this.form.get('name')?.setValue(value, {
       emitEvent: false
     });
-
   }
 
-  stockValidator(): ValidatorFn {
-
-    return (group: AbstractControl) => {
-
-      const stock =
-        group.get('currentStock')?.value;
-
-      const min =
-        group.get('minStock')?.value;
-
-      if (min > stock) {
-
-        return {
-          minGreaterThanStock: true
-        };
-
+  loadSupplies(): void {
+    this.supplyService.getSupplies().subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.supplies = res.data.data;
+          console.log(this.supplies);
+          console.log(res);
+        }
       }
-
-      return null;
-
-    };
-
-  }
-  
-  onCategoryChange(category: string): void {
-
-    switch (category) {
-
-      case 'Tela':
-        this.codePlaceholder = 'Ej. TEL-ALGODON-001';
-        break;
-
-      case 'Botones':
-        this.codePlaceholder = 'Ej. BOT-PLASTICO-001';
-        break;
-
-      case 'Hilos':
-        this.codePlaceholder = 'Ej. HIL-POLIESTER-001';
-        break;
-
-      case 'Piezas':
-        this.codePlaceholder = 'Ej. PZA-CIERRE-001';
-        break;
-
-      default:
-        this.codePlaceholder = 'Seleccione una categoría';
-
-    }
-
+    });
   }
 }
