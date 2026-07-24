@@ -20,10 +20,25 @@
 
     </div>
 
-    <p-tag
-      [severity]="supplier.active ? 'success' : 'danger'"
-      [value]="supplier.active ? 'Activo' : 'Inactivo'">
-    </p-tag>
+    <div class="flex items-center gap-2 flex-shrink-0">
+
+      @if (togglingActive) {
+        <i class="pi pi-spin pi-spinner text-slate-400 text-sm"></i>
+      }
+
+      <p-tag
+        [severity]="supplier.active ? 'success' : 'danger'"
+        [value]="supplier.active ? 'Activo' : 'Inactivo'">
+      </p-tag>
+
+      <p-toggleswitch
+        *appHasPermission="['proveedores', 'canEdit']"
+        [ngModel]="supplier.active"
+        [disabled]="togglingActive"
+        (ngModelChange)="onToggleActive($event)"
+        [ariaLabel]="supplier.active ? 'Desactivar proveedor' : 'Activar proveedor'" />
+
+    </div>
 
   </div>
 
@@ -84,6 +99,7 @@
   <div class="flex gap-2 mt-5">
 
     <button
+      *appHasPermission="['proveedores', 'canEdit']"
       pButton
       icon="pi pi-pencil"
       label="Editar"
@@ -92,6 +108,7 @@
     </button>
 
     <button
+      *appHasPermission="['proveedores', 'canDelete']"
       pButton
       icon="pi pi-trash"
       class="p-button-outlined p-button-danger p-button-sm w-10"

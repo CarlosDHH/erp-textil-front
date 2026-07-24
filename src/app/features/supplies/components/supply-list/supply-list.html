@@ -9,10 +9,12 @@
 
   <div class="card bg-white p-4 rounded-xl shadow-sm border border-slate-100">
     <div class="flex justify-between items-center mb-4">
-      <span class="p-input-icon-left w-full max-w-md">
-        <i class="pi pi-search"></i>
+      <!-- p-input-icon-left desapareció en PrimeNG 20; p-iconfield coloca el
+           icono dentro del campo en lugar de dejarlo suelto a su izquierda. -->
+      <p-iconfield class="w-full max-w-md">
+        <p-inputicon class="pi pi-search" />
         <input pInputText type="text" (input)="onSearch($event)" placeholder="Buscar por código, nombre o tipo..." class="w-full bg-gray-50 border-gray-300 rounded-lg" />
-      </span>
+      </p-iconfield>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
