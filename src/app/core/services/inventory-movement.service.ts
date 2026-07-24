@@ -3,23 +3,35 @@ import { HttpClient, HttpParams } from '@angular/common/http'
 import { Observable } from 'rxjs'
 import { environment } from '../../../environments/environment'
 
-/** Tipos de movimiento del backend (se guardan en inglés). */
-export type MovementType = 'entry' | 'exit' | 'adjustment' | 'loss'
+/**
+ * Tipos de evento del backend (se guardan en inglés).
+ * `update` no mueve existencias: es el registro de auditoría que se crea al
+ * editar un insumo, un lote o un usuario.
+ */
+export type MovementType = 'entry' | 'exit' | 'adjustment' | 'loss' | 'update'
 
 /** Movimientos que descuentan inventario: salidas y mermas. */
 export const DISCOUNT_MOVEMENT_TYPES: MovementType[] = ['exit', 'loss']
 
+/** Registro afectado por un evento de tipo `update`. */
+export type ActivityEntity = 'supply' | 'batch' | 'user'
+
 export interface InventoryMovement {
   id: string
   userId: string
-  batchId?: string
+  batchId?: string | null
   batchNumber?: string | null
   supplyId?: string | null
   supplyName?: string | null
   unitMeasure?: string | null
   type: MovementType | string
-  quantity?: number
+  /** `null` en las modificaciones, que no mueven cantidad. */
+  quantity?: number | null
   reason?: string | null
+  /** Solo en eventos `update`: qué tabla se editó. */
+  entity?: ActivityEntity | string | null
+  entityId?: string | null
+  entityName?: string | null
   createdAt: string
 }
 

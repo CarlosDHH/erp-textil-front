@@ -4,11 +4,13 @@ import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { RouterModule } from '@angular/router';
 import { Batch } from '../../models/batch.model';
+import { resolveSwatchColor } from '../../models/batch.constants';
+import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
 
 @Component({
   selector: 'app-batch-card',
   standalone: true,
-  imports: [CommonModule, TagModule, ButtonModule, RouterModule],
+  imports: [CommonModule, TagModule, ButtonModule, RouterModule, HasPermissionDirective],
   templateUrl: './batch-card.html'
 })
 export class BatchCardComponent {
@@ -17,7 +19,7 @@ export class BatchCardComponent {
   batch!: Batch;
 
   @Output()
-  delete = new EventEmitter<number>();
+  delete = new EventEmitter<string>();
 
   get severity(): 'success' | 'warn' | 'danger' {
     if (this.batch.currentQuantity === 0) return 'danger';
@@ -42,6 +44,12 @@ export class BatchCardComponent {
     }
     return 'text-green-600';
   }
+
+  /** Color CSS para el swatch, resuelto desde el hexadecimal o el nombre en español. */
+  get swatchColor(): string {
+    return resolveSwatchColor(this.batch.color);
+  }
+
   onDelete(): void {
     this.delete.emit(this.batch.id);
   }

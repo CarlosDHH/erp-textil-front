@@ -197,6 +197,7 @@ export class UserProfileComponent implements OnInit {
     exit: 'Salida',
     adjustment: 'Ajuste',
     loss: 'Merma',
+    update: 'Modificación',
   }
 
   /** Severidad del `p-tag` por tipo de movimiento (mismo criterio de color en toda la app). */
@@ -205,6 +206,7 @@ export class UserProfileComponent implements OnInit {
     exit: 'info',
     adjustment: 'warn',
     loss: 'danger',
+    update: 'warn',
   }
 
   /** Icono de PrimeIcons por tipo de movimiento. */
@@ -213,6 +215,7 @@ export class UserProfileComponent implements OnInit {
     exit: 'pi pi-arrow-up-right',
     adjustment: 'pi pi-sliders-h',
     loss: 'pi pi-exclamation-triangle',
+    update: 'pi pi-pencil',
   }
 
   activityType(item: InventoryMovement): string {

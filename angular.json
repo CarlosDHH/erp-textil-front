@@ -32,6 +32,13 @@
             "styles": [
               "src/tailwind.css",
               "src/styles.scss"
+            ],
+            "allowedCommonJsDependencies": [
+              "sweetalert2",
+              "html2canvas",
+              "raf",
+              "rgbcolor",
+              "core-js"
             ]
           },
           "configurations": {
