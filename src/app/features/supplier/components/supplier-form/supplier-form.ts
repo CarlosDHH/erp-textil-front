@@ -7,6 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SupplierService } from '../../services/supplier';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { strictEmailValidator } from '../../../../core/validators/email.validator';
 
 @Component({
   selector: 'app-supplier-form',
@@ -42,7 +43,7 @@ export class SupplierFormComponent implements OnInit {
           name: ['', [Validators.required, Validators.maxLength(180)]],
           rfc: ['', [Validators.maxLength(13), Validators.pattern(/^([A-Z&Ñ]{3,4})(\d{6})([A-Z0-9]{3})$/)]],
           phone: ['', [Validators.maxLength(20), Validators.pattern(/^[0-9]+$/)]],
-          email: ['', [Validators.email, Validators.maxLength(180)]],
+          email: ['', [strictEmailValidator(), Validators.maxLength(180)]],
           contactName: ['', [Validators.maxLength(120)]],
           active: [true]
       });

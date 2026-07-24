@@ -7,11 +7,12 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SupplyService } from '../../services/supply';
 import { Supply } from '../../models/supply.model';
 import { SupplyCardComponent } from '../supply-card/supply-card.component';
+import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
 
 @Component({
   selector: 'app-supply-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, TableModule, ButtonModule, InputTextModule, SupplyCardComponent],
+  imports: [CommonModule, RouterModule, TableModule, ButtonModule, InputTextModule, SupplyCardComponent, HasPermissionDirective],
   templateUrl: './supply-list.html'
 })
 export class SupplyListComponent implements OnInit {

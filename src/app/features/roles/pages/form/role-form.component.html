@@ -45,6 +45,43 @@
         </div>
       </div>
 
+      <div class="permissions-section">
+        <h3>Permisos por módulo</h3>
+        <p class="permissions-hint">Define qué puede hacer este rol en cada módulo del sistema.</p>
+
+        @if (modulesLoading()) {
+          <div class="state-message">
+            <i class="pi pi-spin pi-spinner"></i>
+            <span>Cargando módulos...</span>
+          </div>
+        } @else {
+          <div class="permissions-table">
+            <div class="permissions-row permissions-head">
+              <span>Módulo</span>
+              <span>Ver</span>
+              <span>Crear</span>
+              <span>Editar</span>
+              <span>Eliminar</span>
+            </div>
+            @for (row of permissionRows(); track row.moduleId; let i = $index) {
+              <div class="permissions-row" [formGroup]="permissionGroup(i)">
+                <span class="permission-module">{{ row.name }}</span>
+                <p-checkbox
+                  formControlName="canView"
+                  [binary]="true"
+                  [disabled]="viewLocked(i)"
+                  pTooltip="Crear, editar o eliminar requieren poder ver"
+                  [tooltipDisabled]="!viewLocked(i)"
+                />
+                <p-checkbox formControlName="canCreate" [binary]="true" />
+                <p-checkbox formControlName="canEdit" [binary]="true" />
+                <p-checkbox formControlName="canDelete" [binary]="true" />
+              </div>
+            }
+          </div>
+        }
+      </div>
+
       <div class="form-actions">
         <p-button label="Cancelar" [outlined]="true" (onClick)="goBack()" />
         <p-button

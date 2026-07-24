@@ -10,6 +10,7 @@ import { ConfirmationService, MessageService } from 'primeng/api'
 import { FormsModule } from '@angular/forms'
 
 import { RoleService, Role } from '../../services/role.service'
+import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive'
 
 @Component({
   selector: 'app-role-list',
@@ -22,6 +23,7 @@ import { RoleService, Role } from '../../services/role.service'
     ConfirmDialogModule,
     ToastModule,
     FormsModule,
+    HasPermissionDirective,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './role-list.component.html',

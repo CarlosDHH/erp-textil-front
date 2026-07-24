@@ -1,9 +1,9 @@
 import { Component, inject, OnInit, signal } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms'
+import { FormBuilder, Validators, ReactiveFormsModule, AbstractControl, AsyncValidatorFn, ValidationErrors } from '@angular/forms'
 import { Router, ActivatedRoute } from '@angular/router'
 import { AsyncPipe } from '@angular/common'
-import { Observable, map, shareReplay } from 'rxjs'
+import { Observable, map, shareReplay, of, switchMap, timer, catchError } from 'rxjs'
 import { InputTextModule } from 'primeng/inputtext'
 import { InputMaskModule } from 'primeng/inputmask'
 import { SelectModule } from 'primeng/select'
@@ -14,6 +14,7 @@ import { MessageService } from 'primeng/api'
 
 import { UserService } from '../../services/user.service'
 import { RoleService, Role } from '../../../roles/services/role.service'
+import { strictEmailValidator } from '../../../../core/validators/email.validator'
 
 @Component({
   selector: 'app-user-form',
@@ -65,8 +66,13 @@ export class UserFormComponent implements OnInit {
   form = this.fb.group({
     name:     ['', [Validators.required]],
     lastName: ['', [Validators.required]],
-    email:    ['', [Validators.required, Validators.email]],
-    phone:    ['', [Validators.required, Validators.minLength(10), Validators.maxLength(15)]],
+    // Patrón estricto en lugar de Validators.email: éste último acepta 'usuario@dominio'
+    // (sin punto ni extensión), lo que permitía guardar correos inservibles.
+    email:    ['', [Validators.required, strictEmailValidator(), Validators.maxLength(180)]],
+    phone:    ['', {
+      validators: [Validators.required, Validators.minLength(10), Validators.maxLength(15)],
+      asyncValidators: [this.phoneUniqueValidator()],
+    }],
     roleId:   ['', [Validators.required]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     active:   [true],
@@ -109,7 +115,7 @@ export class UserFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.form.invalid) return
+    if (this.form.invalid || this.form.pending) return
 
     this.loading.set(true)
     const value = this.form.value
@@ -159,6 +165,23 @@ export class UserFormComponent implements OnInit {
           this.loading.set(false)
         },
       })
+    }
+  }
+
+  /**
+   * Validador asíncrono: consulta al backend si el teléfono ya pertenece a otro usuario.
+   * timer(400) actúa como debounce (Angular cancela la validación previa al cambiar el valor)
+   * y switchMap descarta respuestas obsoletas. En edición excluye al propio usuario.
+   */
+  private phoneUniqueValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      const phone = (control.value ?? '').toString().trim()
+      if (!phone) return of(null)
+      return timer(400).pipe(
+        switchMap(() => this.userService.checkPhone(phone, this.userId())),
+        map((res) => (res.data?.exists ? { phoneTaken: true } : null)),
+        catchError(() => of(null)),
+      )
     }
   }
 

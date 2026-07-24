@@ -24,6 +24,31 @@ html, body {
   letter-spacing: -0.03em;
 }
 
+// ─── Campos de contraseña (p-password) ───────────────────────
+// PrimeNG posiciona el icono del ojo en `position: absolute` respecto al host
+// `.p-password` (que es `inline-flex`), NO respecto al <input>. Cuando el host
+// se estira con `w-full` y el input conserva su ancho por defecto, el icono
+// queda flotando fuera del campo. Forzamos que el input llene siempre el host
+// para que el ojo caiga dentro del input y sea clickeable.
+.p-password {
+  display: inline-flex;
+  width: 100%;
+
+  .p-password-input {
+    width: 100%;
+  }
+
+  // El icono es puramente decorativo para el layout: el clic lo captura el
+  // propio host, pero sin cursor no se percibe como accionable.
+  .p-password-toggle-mask-icon {
+    cursor: pointer;
+    // Neutraliza el `margin-top` del tema y centra el icono con precisión
+    // sin importar la altura real del input (py-3, p-inputtext-sm, etc.).
+    margin-top: 0;
+    transform: translateY(-50%);
+  }
+}
+
 // ─── Mobile sidebar drawer (tema oscuro) ─────────────────────
 // El p-drawer se renderiza en un portal fuera del DOM del componente,
 // por eso los overrides van aquí y no en layout.scss

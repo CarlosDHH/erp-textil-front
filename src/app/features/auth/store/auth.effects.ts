@@ -2,8 +2,9 @@ import { inject, Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Router } from '@angular/router'
 import { catchError, map, switchMap, tap } from 'rxjs/operators'
-import { of } from 'rxjs'
+import { from, of } from 'rxjs'
 import { HttpErrorResponse } from '@angular/common/http'
+import { startAuthentication } from '@simplewebauthn/browser'
 import * as AuthActions from './auth.actions'
 import { AuthService } from '../services/auth.service'
 import { StorageService } from '../../../core/services/storage.service'
@@ -66,16 +67,73 @@ export class AuthEffects {
       tap(({ user, accessToken, refreshToken }) => {
         this.storageService.setTokens(accessToken, refreshToken)
         this.storageService.setUser(user)
+        this.authService
+          .updateSessionStatus('online', accessToken)
+          .pipe(catchError(() => of(null)))
+          .subscribe()
         this.router.navigate(['/admin/dashboard'])
       })
     ),
     { dispatch: false }
   )
 
+  loginBiometric$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.loginBiometric),
+      switchMap(({ email }) =>
+        this.authService.getBiometricLoginOptions(email).pipe(
+          switchMap((optionsResponse) => {
+            if (!optionsResponse.success) {
+              return of(AuthActions.loginFailure({ error: optionsResponse.message }))
+            }
+            return from(startAuthentication({ optionsJSON: optionsResponse.data })).pipe(
+              switchMap((credential) =>
+                this.authService.verifyBiometricLogin(email, credential).pipe(
+                  map((response) => {
+                    if (!response.success) {
+                      return AuthActions.loginFailure({ error: response.message })
+                    }
+                    return AuthActions.loginSuccess({
+                      user: response.data.user,
+                      accessToken: response.data.accessToken,
+                      refreshToken: response.data.refreshToken,
+                    })
+                  }),
+                  catchError((error: HttpErrorResponse) => {
+                    const message =
+                      error?.error?.message ?? 'No se pudo verificar la huella biométrica'
+                    return of(AuthActions.loginFailure({ error: message }))
+                  })
+                )
+              ),
+              catchError((error: { name?: string }) => {
+                const message =
+                  error?.name === 'NotAllowedError'
+                    ? 'Autenticación biométrica cancelada.'
+                    : 'No se pudo completar la autenticación biométrica en este dispositivo.'
+                return of(AuthActions.loginFailure({ error: message }))
+              })
+            )
+          }),
+          catchError((error: HttpErrorResponse) => {
+            const message =
+              error?.error?.message ?? 'No se pudo iniciar la autenticación biométrica'
+            return of(AuthActions.loginFailure({ error: message }))
+          })
+        )
+      )
+    )
+  )
+
   logout$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.logout),
       tap(() => {
+        const accessToken = this.storageService.getAccessToken()
+        this.authService
+          .updateSessionStatus('offline', accessToken)
+          .pipe(catchError(() => of(null)))
+          .subscribe()
         this.storageService.clear()
         this.router.navigate(['/auth/login'])
       })

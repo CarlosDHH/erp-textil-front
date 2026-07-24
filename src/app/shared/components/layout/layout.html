@@ -28,7 +28,7 @@
 
     <nav class="flex-1 overflow-y-auto py-4">
       <ul class="space-y-2 px-3">
-        @for (item of navItems; track item.route) {
+        @for (item of visibleNavItems(); track item.route) {
           <li>
             <a
               [routerLink]="item.route"
@@ -80,7 +80,7 @@
 
     <nav class="flex-1 overflow-y-auto py-4">
       <ul class="space-y-2 px-3">
-        @for (item of navItems; track item.route) {
+        @for (item of visibleNavItems(); track item.route) {
           <li>
             <a
               [routerLink]="item.route"

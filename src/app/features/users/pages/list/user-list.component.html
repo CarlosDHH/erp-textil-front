@@ -4,7 +4,7 @@
 
   <div class="page-header">
     <h2>Usuarios</h2>
-    <p-button label="Nuevo usuario" icon="pi pi-plus" (onClick)="goToCreate()" />
+    <p-button *appHasPermission="['usuarios', 'canCreate']" label="Nuevo usuario" icon="pi pi-plus" (onClick)="goToCreate()" />
   </div>
 
   <div class="search-bar">
@@ -63,6 +63,7 @@
               (onClick)="goToProfile(user.id)"
             />
             <p-button
+              *appHasPermission="['usuarios', 'canEdit']"
               icon="pi pi-pencil"
               [rounded]="true"
               [text]="true"
@@ -70,6 +71,7 @@
               (onClick)="goToEdit(user.id)"
             />
             <p-button
+              *appHasPermission="['usuarios', 'canDelete']"
               icon="pi pi-trash"
               [rounded]="true"
               [text]="true"

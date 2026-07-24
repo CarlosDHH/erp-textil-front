@@ -3,12 +3,22 @@ import { HttpClient, HttpParams } from '@angular/common/http'
 import { Observable } from 'rxjs'
 import { environment } from '../../../../environments/environment'
 
+export interface RolePermission {
+  id: string
+  module: string
+  canView: boolean
+  canCreate: boolean
+  canEdit: boolean
+  canDelete: boolean
+}
+
 export interface Role {
   id: string
   name: string
   description?: string
   isActive: boolean
   createdAt: string
+  permissions?: RolePermission[]
 }
 
 export interface RoleListResponse {

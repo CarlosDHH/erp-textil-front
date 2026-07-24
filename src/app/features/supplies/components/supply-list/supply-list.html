@@ -4,7 +4,7 @@
       <h1 class="text-2xl font-bold text-slate-800">Inventario de Insumos</h1>
       <p class="text-sm text-slate-500">Administra el registro y existencias de materias primas.</p>
     </div>
-    <button pButton label="Nuevo Material" icon="pi pi-plus" routerLink="new" class="bg-blue-600 hover:bg-blue-700 border-none"></button>
+    <button *appHasPermission="['insumos', 'canCreate']" pButton label="Nuevo Material" icon="pi pi-plus" routerLink="new" class="bg-blue-600 hover:bg-blue-700 border-none"></button>
   </div>
 
   <div class="card bg-white p-4 rounded-xl shadow-sm border border-slate-100">

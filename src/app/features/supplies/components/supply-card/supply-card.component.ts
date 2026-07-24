@@ -5,11 +5,12 @@ import { ButtonModule } from 'primeng/button';
 import { Supply } from '../../models/supply.model';
 import { RouterModule } from '@angular/router';
 import { Output, EventEmitter } from '@angular/core';
+import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
 
 @Component({
   selector: 'app-supply-card',
   standalone: true,
-  imports: [CommonModule, TagModule, ButtonModule, RouterModule],
+  imports: [CommonModule, TagModule, ButtonModule, RouterModule, HasPermissionDirective],
   templateUrl: './supply-card.component.html'
 })
 export class SupplyCardComponent {

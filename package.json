@@ -36,6 +36,7 @@
     "@ngrx/store": "^20.1.0",
     "@ngrx/store-devtools": "^20.1.0",
     "@primeng/themes": "^20.4.0",
+    "@simplewebauthn/browser": "^13.3.0",
     "@swimlane/ngx-charts": "^24.0.0",
     "primeicons": "^7.0.0",
     "primeng": "^20.4.0",

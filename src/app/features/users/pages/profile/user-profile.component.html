@@ -71,6 +71,107 @@
             }
           </div>
         </div>
+
+        @if (isOwnProfile() && webAuthnSupported()) {
+          <div class="biometric-section">
+            <div class="biometric-text">
+              <span class="detail-label">Seguridad biométrica</span>
+              <span class="detail-value">Registra tu huella o rostro para iniciar sesión más rápido.</span>
+            </div>
+            <p-button
+              label="Registrar Huella Biométrica"
+              icon="pi pi-shield"
+              [outlined]="true"
+              [loading]="biometricRegistering()"
+              (onClick)="openPasswordModal()"
+            />
+          </div>
+        }
+      </div>
+
+      <div class="profile-card profile-tabs-card">
+        <p-tabs value="0">
+          <p-tablist>
+            <p-tab value="0">Mis Permisos</p-tab>
+            <p-tab value="1">Actividad Reciente</p-tab>
+          </p-tablist>
+          <p-tabpanels>
+            <p-tabpanel value="0">
+              @if (permissionsLoading()) {
+                <div class="state-message">
+                  <i class="pi pi-spin pi-spinner"></i>
+                  <span>Cargando permisos...</span>
+                </div>
+              } @else if (permissions().length === 0) {
+                <div class="state-message">
+                  <span>No hay permisos configurados para este rol.</span>
+                </div>
+              } @else {
+                <div class="permissions-table">
+                  <div class="permissions-row permissions-head">
+                    <span>Módulo</span>
+                    <span>Ver</span>
+                    <span>Crear</span>
+                    <span>Editar</span>
+                    <span>Eliminar</span>
+                  </div>
+                  @for (perm of permissions(); track perm.id) {
+                    <div class="permissions-row">
+                      <span class="permission-module">{{ perm.module }}</span>
+                      <p-tag [value]="perm.canView ? 'Sí' : 'No'" [severity]="perm.canView ? 'success' : 'secondary'" />
+                      <p-tag [value]="perm.canCreate ? 'Sí' : 'No'" [severity]="perm.canCreate ? 'success' : 'secondary'" />
+                      <p-tag [value]="perm.canEdit ? 'Sí' : 'No'" [severity]="perm.canEdit ? 'success' : 'secondary'" />
+                      <p-tag [value]="perm.canDelete ? 'Sí' : 'No'" [severity]="perm.canDelete ? 'success' : 'secondary'" />
+                    </div>
+                  }
+                </div>
+              }
+            </p-tabpanel>
+
+            <p-tabpanel value="1">
+              @if (activityLoading()) {
+                <div class="state-message">
+                  <i class="pi pi-spin pi-spinner"></i>
+                  <span>Cargando actividad...</span>
+                </div>
+              } @else if (activityError()) {
+                <div class="state-message">
+                  <span>{{ activityError() }}</span>
+                </div>
+              } @else if (activity().length === 0) {
+                <div class="state-message">
+                  <span>Sin actividad reciente registrada.</span>
+                </div>
+              } @else {
+                <div class="activity-list">
+                  @for (item of activity(); track item.id) {
+                    <div class="activity-item">
+                      <i [class]="activityIcon(item)"></i>
+                      <div class="detail-text">
+                        <span class="detail-value">{{ activityTitle(item) }}</span>
+                        <span class="detail-label">
+                          {{ item.createdAt | date: 'dd/MM/yyyy HH:mm' }}
+                          @if (item.batchNumber) {
+                            · Lote {{ item.batchNumber }}
+                          }
+                          @if (item.reason) {
+                            · {{ item.reason }}
+                          }
+                        </span>
+                      </div>
+                      <div class="activity-meta">
+                        @if (activityQuantity(item); as qty) {
+                          <span class="activity-quantity">{{ qty }}</span>
+                        }
+                        <p-tag [value]="activityType(item)" [severity]="activitySeverity(item)" />
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </p-tabpanel>
+          </p-tabpanels>
+        </p-tabs>
       </div>
     } @else {
       <div class="profile-card state-message">
@@ -79,3 +180,43 @@
     }
   }
 </div>
+
+<p-dialog
+  header="Confirma tu contraseña"
+  [(visible)]="showPasswordModal"
+  [modal]="true"
+  [dismissableMask]="true"
+  [style]="{ width: '26rem' }"
+>
+  <p class="text-gray-500 text-sm mb-4">
+    Por seguridad, introduce tu contraseña actual antes de registrar tu huella/rostro.
+  </p>
+
+  @if (passwordError()) {
+    <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex items-start space-x-3">
+      <i class="pi pi-exclamation-circle text-base mt-0.5 flex-shrink-0"></i>
+      <span>{{ passwordError() }}</span>
+    </div>
+  }
+
+  <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()" class="space-y-4">
+    <p-password
+      formControlName="password"
+      placeholder="Contraseña actual"
+      [feedback]="false"
+      [toggleMask]="true"
+      styleClass="w-full"
+      inputStyleClass="w-full"
+    />
+    @if (password?.invalid && password?.touched) {
+      <span class="text-xs text-red-500 font-medium">La contraseña es requerida.</span>
+    }
+
+    <p-button
+      type="submit"
+      label="Confirmar"
+      [loading]="passwordVerifying()"
+      styleClass="w-full"
+    />
+  </form>
+</p-dialog>
