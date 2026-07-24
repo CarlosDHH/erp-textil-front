@@ -34,6 +34,39 @@ export interface InsumoResumen {
   unit: string
 }
 
+/** Rango temporal del panel de descontación. */
+export type DiscountRange = 'day' | 'week'
+
+/** Un insumo con el total descontado en el periodo consultado. */
+export interface SupplyDiscountRow {
+  supplyId: string
+  supplyName: string
+  unitMeasure: string
+  /** Total descontado en el periodo (salidas + mermas). */
+  total: number
+  /** Parte del total que corresponde a salidas normales. */
+  exitTotal: number
+  /** Parte del total que corresponde a mermas (desperdicio). */
+  lossTotal: number
+  /** Número de movimientos que componen el total. */
+  movements: number
+}
+
+/**
+ * Resumen de descontación de insumos: qué salió del almacén en el periodo,
+ * calculado a partir de los movimientos de tipo `exit` y `loss`.
+ */
+export interface DiscountSummary {
+  range: DiscountRange
+  from: Date
+  to: Date
+  rows: SupplyDiscountRow[]
+  /** Movimientos totales del periodo. */
+  totalMovements: number
+  /** Suma de mermas del periodo (en unidades, mezclando unidades de medida). */
+  totalLoss: number
+}
+
 export interface DashboardSummary {
   kpis: KpiMetric[]
   /** Insumos registrados por mes (derivado de Supply.createdAt). */

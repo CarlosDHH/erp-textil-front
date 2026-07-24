@@ -44,6 +44,10 @@
 }
 
 <section class="dashboard-metrics">
+  <!-- Resumen de descontación: se carga por su cuenta (movimientos de inventario)
+       para no retrasar los KPIs si el historial es grande. -->
+  <app-discount-summary />
+
   @if (summary$ | async; as summary) {
     <app-kpi-cards [kpis]="summary.kpis" />
 

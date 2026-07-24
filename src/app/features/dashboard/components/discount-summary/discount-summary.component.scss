@@ -1,0 +1,157 @@
+@use '../../../../../styles/variables' as *;
+
+.discount-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.discount-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $spacing-md;
+  flex-wrap: wrap;
+}
+
+.discount-title {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+
+  i {
+    font-size: 20px;
+    color: $danger;
+    margin-top: 2px;
+  }
+
+  h3 {
+    font-family: $font-display;
+    font-size: 17px;
+    font-weight: 600;
+    color: #1e293b;
+    letter-spacing: -0.02em;
+  }
+}
+
+.discount-period {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.discount-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  padding: $spacing-xl 0;
+  color: #64748b;
+  font-size: 14px;
+
+  &--error {
+    color: $danger;
+  }
+}
+
+.discount-totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: $spacing-md;
+}
+
+.discount-total {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: $spacing-md;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+}
+
+.discount-total-label {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.discount-total-value {
+  font-family: $font-display;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  letter-spacing: -0.02em;
+
+  &--loss {
+    color: $danger;
+  }
+}
+
+.discount-table {
+  display: flex;
+  flex-direction: column;
+  // La tabla desborda en pantallas estrechas: se desplaza sola en lugar de
+  // provocar scroll horizontal en toda la página.
+  overflow-x: auto;
+}
+
+.discount-row {
+  display: grid;
+  grid-template-columns: minmax(160px, 2fr) repeat(3, minmax(90px, 1fr));
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+  color: #334155;
+
+  &--head {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #94a3b8;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.align-right {
+  text-align: right;
+}
+
+.discount-supply {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+
+  small {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 400;
+  }
+}
+
+.discount-amount {
+  font-weight: 700;
+  color: #1e293b;
+
+  small {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: #94a3b8;
+  }
+}
+
+.discount-zero {
+  color: #cbd5e1;
+}
