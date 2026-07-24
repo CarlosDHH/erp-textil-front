@@ -11,6 +11,7 @@ import { Supplier } from '../../models/supplier.model';
 import { SupplierCardComponent } from '../supplier-card/supplier-card';
 import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
 import { AlertService } from '../../../../core/services/alert.service';
+import { PdfReportService } from '../../../../core/services/pdf-report.service';
 
 @Component({
   selector: 'app-supplier-list',
@@ -31,10 +32,12 @@ import { AlertService } from '../../../../core/services/alert.service';
 export class SupplierListComponent implements OnInit {
   private supplierService = inject(SupplierService);
   private alertService = inject(AlertService);
+  private pdfReportService = inject(PdfReportService);
 
   suppliers: Supplier[] = [];
   totalRecords = 0;
   loading = false;
+  exporting = false;
   page = 1;
   limit = 20;
   search = '';
@@ -112,6 +115,87 @@ export class SupplierListComponent implements OnInit {
         );
       },
     });
+  }
+
+  /**
+   * Reporte PDF del padrón de proveedores con sus datos de contacto.
+   * Se reconsulta el listado completo con el filtro vigente para no exportar
+   * únicamente la página en pantalla; los inactivos salen resaltados.
+   */
+  exportPdf(): void {
+    this.exporting = true;
+
+    this.supplierService.getSuppliers(1, 1000, this.search).subscribe({
+      next: async (res) => {
+        const rows: Supplier[] = res?.success ? res.data.data : [];
+
+        if (rows.length === 0) {
+          this.exporting = false;
+          this.alertService.error(
+            'No hay datos para exportar',
+            'No se encontraron proveedores con los filtros actuales.',
+          );
+          return;
+        }
+
+        const active = rows.filter((s) => s.active).length;
+
+        try {
+          await this.pdfReportService.generate<Supplier>({
+            title: 'Padrón de Proveedores',
+            subtitle: this.search
+              ? `Filtro aplicado: «${this.search}»`
+              : 'Directorio de proveedores registrados',
+            fileName: 'reporte-proveedores',
+            orientation: 'landscape',
+            rows,
+            totals: [
+              { label: 'Proveedores', value: String(rows.length) },
+              { label: 'Activos', value: `${active} de ${rows.length}` },
+            ],
+            highlightRow: (s) => !s.active,
+            columns: [
+              { header: 'Proveedor', value: (s) => s.name },
+              { header: 'RFC', value: (s) => s.rfc || '—', width: 32 },
+              { header: 'Contacto', value: (s) => s.contactName || '—', width: 42 },
+              { header: 'Teléfono', value: (s) => s.phone || '—', width: 30 },
+              { header: 'Correo', value: (s) => s.email || '—' },
+              {
+                header: 'Estado',
+                value: (s) => (s.active ? 'Activo' : 'Inactivo'),
+                width: 22,
+              },
+              {
+                header: 'Alta',
+                value: (s) => this.formatDate(s.createdAt),
+                width: 24,
+              },
+            ],
+          });
+          this.alertService.toast('Reporte descargado');
+        } catch {
+          this.alertService.error(
+            'No se pudo generar el reporte',
+            'Ocurrió un problema al construir el PDF.',
+          );
+        } finally {
+          this.exporting = false;
+        }
+      },
+      error: () => {
+        this.exporting = false;
+        this.alertService.error(
+          'No se pudo generar el reporte',
+          'No fue posible obtener los proveedores.',
+        );
+      },
+    });
+  }
+
+  private formatDate(value?: string): string {
+    if (!value) return '—';
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? '—' : date.toLocaleDateString('es-MX');
   }
 
   deleteSupplier(id: string): void {

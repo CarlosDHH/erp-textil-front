@@ -11,6 +11,7 @@ import { Supply } from '../../models/supply.model';
 import { SupplyCardComponent } from '../supply-card/supply-card.component';
 import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
 import { AlertService } from '../../../../core/services/alert.service';
+import { PdfReportService } from '../../../../core/services/pdf-report.service';
 
 @Component({
   selector: 'app-supply-list',
@@ -31,10 +32,12 @@ import { AlertService } from '../../../../core/services/alert.service';
 export class SupplyListComponent implements OnInit {
   private supplyService = inject(SupplyService);
   private alertService = inject(AlertService);
+  private pdfReportService = inject(PdfReportService);
 
   supplies: Supply[] = [];
   totalRecords = 0;
   loading = false;
+  exporting = false;
   page = 1;
   limit = 20;
   search = '';
@@ -67,6 +70,87 @@ export class SupplyListComponent implements OnInit {
     this.search = (event.target as HTMLInputElement).value;
     this.page = 1;
     this.fetchSupplies();
+  }
+
+  /**
+   * Reporte PDF del inventario.
+   *
+   * No exporta la página visible: vuelve a pedir el catálogo completo (aplicando
+   * el mismo texto de búsqueda) para que el documento no dependa de la
+   * paginación en pantalla. Los insumos por debajo del mínimo salen resaltados.
+   */
+  exportPdf(): void {
+    this.exporting = true;
+
+    this.supplyService.getSupplies(1, 1000, this.search).subscribe({
+      next: async (res) => {
+        const rows: Supply[] = res?.success ? res.data.data : [];
+
+        if (rows.length === 0) {
+          this.exporting = false;
+          this.alertService.error(
+            'No hay datos para exportar',
+            'No se encontraron insumos con los filtros actuales.',
+          );
+          return;
+        }
+
+        const critical = rows.filter((s) => Number(s.currentStock) <= Number(s.minStock));
+
+        try {
+          await this.pdfReportService.generate<Supply>({
+            title: 'Inventario de Insumos',
+            subtitle: this.search
+              ? `Filtro aplicado: «${this.search}»`
+              : 'Catálogo completo de materias primas',
+            fileName: 'reporte-insumos',
+            rows,
+            totals: [
+              { label: 'Insumos', value: String(rows.length) },
+              { label: 'En stock crítico', value: String(critical.length) },
+            ],
+            highlightRow: (s) => Number(s.currentStock) <= Number(s.minStock),
+            columns: [
+              { header: 'Código', value: (s) => s.code ?? '—', width: 26 },
+              { header: 'Insumo', value: (s) => s.name },
+              { header: 'Categoría', value: (s) => s.type ?? '—', width: 28 },
+              { header: 'Unidad', value: (s) => s.unitMeasure ?? '—', width: 24 },
+              {
+                header: 'Stock actual',
+                value: (s) => this.formatQuantity(s.currentStock),
+                width: 26,
+                align: 'right',
+              },
+              {
+                header: 'Stock mínimo',
+                value: (s) => this.formatQuantity(s.minStock),
+                width: 26,
+                align: 'right',
+              },
+            ],
+          });
+          this.alertService.toast('Reporte descargado');
+        } catch {
+          this.alertService.error(
+            'No se pudo generar el reporte',
+            'Ocurrió un problema al construir el PDF.',
+          );
+        } finally {
+          this.exporting = false;
+        }
+      },
+      error: () => {
+        this.exporting = false;
+        this.alertService.error(
+          'No se pudo generar el reporte',
+          'No fue posible obtener el inventario.',
+        );
+      },
+    });
+  }
+
+  private formatQuantity(value: number | undefined): string {
+    return Number(value ?? 0).toLocaleString('es-MX', { maximumFractionDigits: 2 });
   }
 
   deleteSupply(id: string): void {

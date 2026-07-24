@@ -4,7 +4,17 @@
       <h1 class="text-2xl font-bold text-slate-800">Lotes</h1>
       <p class="text-sm text-slate-500">Administra el registro y existencias de materias primas.</p>
     </div>
-    <button *appHasPermission="['lotes', 'canCreate']" pButton label="Nuevo Material" icon="pi pi-plus" routerLink="new" class="bg-blue-600 hover:bg-blue-700 border-none"></button>
+    <div class="flex items-center gap-3">
+      <button
+        pButton
+        type="button"
+        label="Descargar Reporte PDF"
+        icon="pi pi-file-pdf"
+        [loading]="exporting"
+        (click)="exportPdf()"
+        class="p-button-outlined text-red-600 border-red-200 hover:bg-red-50"></button>
+      <button *appHasPermission="['lotes', 'canCreate']" pButton label="Nuevo Lote" icon="pi pi-plus" routerLink="new" class="bg-blue-600 hover:bg-blue-700 border-none"></button>
+    </div>
   </div>
 
   <div class="card bg-white p-4 rounded-xl shadow-sm border border-slate-100">
