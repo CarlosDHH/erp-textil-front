@@ -22,6 +22,7 @@ import { ModuleService } from '../../../roles/services/module.service'
 import { RolePermissionService } from '../../../roles/services/role-permission.service'
 import { AuthService } from '../../../auth/services/auth.service'
 import { selectUser } from '../../../auth/store/auth.selectors'
+import { unitLabel } from '../../../../core/utils/inventory-labels'
 
 @Component({
   selector: 'app-user-profile',
@@ -235,8 +236,10 @@ export class UserProfileComponent implements OnInit {
   activityQuantity(item: InventoryMovement): string | null {
     if (item.quantity == null) return null
     const sign = item.type === 'exit' || item.type === 'loss' ? '−' : '+'
-    const unit = item.unitMeasure ? ` ${item.unitMeasure}` : ''
-    return `${sign} ${item.quantity}${unit}`
+    // Los insumos de la carga inicial guardan la unidad en inglés ('piece'):
+    // se traduce solo para mostrarla.
+    const unit = unitLabel(item.unitMeasure)
+    return `${sign} ${item.quantity}${unit ? ` ${unit}` : ''}`
   }
 
   goBack(): void {

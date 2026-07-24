@@ -12,6 +12,7 @@ import { SupplyCardComponent } from '../supply-card/supply-card.component';
 import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
 import { AlertService } from '../../../../core/services/alert.service';
 import { PdfReportService } from '../../../../core/services/pdf-report.service';
+import { categoryLabel, unitLabel } from '../../../../core/utils/inventory-labels';
 
 @Component({
   selector: 'app-supply-list',
@@ -113,8 +114,9 @@ export class SupplyListComponent implements OnInit {
             columns: [
               { header: 'Código', value: (s) => s.code ?? '—', width: 26 },
               { header: 'Insumo', value: (s) => s.name },
-              { header: 'Categoría', value: (s) => s.type ?? '—', width: 28 },
-              { header: 'Unidad', value: (s) => s.unitMeasure ?? '—', width: 24 },
+              // Etiquetas normalizadas: la carga inicial las guarda en inglés.
+              { header: 'Categoría', value: (s) => categoryLabel(s.type) || '—', width: 28 },
+              { header: 'Unidad', value: (s) => unitLabel(s.unitMeasure) || '—', width: 24 },
               {
                 header: 'Stock actual',
                 value: (s) => this.formatQuantity(s.currentStock),

@@ -46,6 +46,32 @@
   gap: $spacing-sm;
   color: #94a3b8;
   padding: $spacing-xl;
+
+  // Variante para el vacío del historial: explica por qué no hay nada
+  // en lugar de dejar una sola línea que parece un error.
+  &--empty {
+    flex-direction: column;
+    text-align: center;
+    gap: $spacing-xs;
+
+    i {
+      font-size: 26px;
+      color: #cbd5e1;
+      margin-bottom: $spacing-xs;
+    }
+
+    span {
+      font-size: 14px;
+      font-weight: 500;
+      color: #64748b;
+    }
+
+    small {
+      font-size: 12px;
+      max-width: 380px;
+      line-height: 1.6;
+    }
+  }
 }
 
 .profile-header {

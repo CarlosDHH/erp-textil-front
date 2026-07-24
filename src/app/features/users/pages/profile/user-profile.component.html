@@ -139,8 +139,17 @@
                   <span>{{ activityError() }}</span>
                 </div>
               } @else if (activity().length === 0) {
-                <div class="state-message">
-                  <span>Sin actividad reciente registrada.</span>
+                <div class="state-message state-message--empty">
+                  <i class="pi pi-inbox"></i>
+                  <span>
+                    {{ isOwnProfile() ? 'Todavía no has registrado' : 'Este usuario todavía no ha registrado' }}
+                    movimientos de inventario.
+                  </span>
+                  <small>
+                    Aquí aparecerán las entradas, salidas, ajustes y mermas
+                    {{ isOwnProfile() ? 'que realices' : 'que realice' }}
+                    al dar de alta lotes o despachar material.
+                  </small>
                 </div>
               } @else {
                 <div class="activity-list">

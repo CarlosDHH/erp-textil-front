@@ -4,11 +4,9 @@
     <span class="text-xs font-mono font-semibold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-md border border-gray-200">
       {{ supply.code }}
     </span>
-    <p-tag 
-      [severity]="severity" 
-      [value]="statusLabel" 
-      styleClass="px-2 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider">
-    </p-tag>
+    <span class="px-2 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider" [ngClass]="stockBadgeClass">
+      {{ statusLabel }}
+    </span>
   </div>
 
   <div class="mb-5 flex-grow">
@@ -17,7 +15,7 @@
     </h3>
     <span class="inline-flex items-center gap-1.5 text-xs text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md font-medium border border-blue-100">
       <i class="pi pi-tag text-[10px]"></i>
-      {{ supply.type }}
+      {{ categoryLabel }}
     </span>
   </div>
 
@@ -26,7 +24,7 @@
       <p class="text-[10px] text-gray-500 uppercase tracking-wider font-semibold mb-1">Stock Actual</p>
       <div class="flex items-baseline gap-1">
         <span class="text-xl font-black" [ngClass]="stockColorClass">{{ supply.currentStock }}</span>
-        <span class="text-xs font-medium text-gray-500">{{ supply.unitMeasure }}</span>
+        <span class="text-xs font-medium text-gray-500">{{ unitLabel }}</span>
       </div>
     </div>
     <div class="border-l border-gray-200 pl-3">

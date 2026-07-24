@@ -11,6 +11,7 @@ import {
   InventoryMovement,
   InventoryMovementService,
 } from '../../../core/services/inventory-movement.service'
+import { categoryLabel, unitLabel } from '../../../core/utils/inventory-labels'
 import {
   ChartPoint,
   ChartSeries,
@@ -138,7 +139,9 @@ export class DashboardService {
     const totalsByType = new Map<string, number>()
 
     for (const supply of supplies) {
-      const type = supply.type || 'Sin tipo'
+      // Sin normalizar, 'fabric' (carga inicial) y 'Telas' (alta desde la app)
+      // aparecían como dos porciones distintas de la misma categoría.
+      const type = categoryLabel(supply.type) || 'Sin tipo'
       totalsByType.set(type, (totalsByType.get(type) ?? 0) + 1)
     }
 
@@ -174,7 +177,7 @@ export class DashboardService {
       .map((supply) => ({
         name: supply.name,
         quantity: supply.currentStock,
-        unit: supply.unitMeasure,
+        unit: unitLabel(supply.unitMeasure),
       }))
   }
 
@@ -245,7 +248,8 @@ export class DashboardService {
       const row = rowsBySupply.get(key) ?? {
         supplyId: movement.supplyId ?? key,
         supplyName: movement.supplyName ?? 'Insumo sin nombre',
-        unitMeasure: movement.unitMeasure ?? '',
+        // Los insumos de la carga inicial traen la unidad en inglés ('piece').
+        unitMeasure: unitLabel(movement.unitMeasure),
         total: 0,
         exitTotal: 0,
         lossTotal: 0,
