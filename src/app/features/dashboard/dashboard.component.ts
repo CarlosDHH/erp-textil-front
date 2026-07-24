@@ -11,6 +11,7 @@ import { KpiCardsComponent } from './components/kpi-cards/kpi-cards.component'
 import { SuppliesTrendChartComponent } from './components/charts/supplies-trend-chart/supplies-trend-chart.component'
 import { SupplyDistributionChartComponent } from './components/charts/supply-distribution-chart/supply-distribution-chart.component'
 import { UsersByRoleChartComponent } from './components/charts/users-by-role-chart/users-by-role-chart.component'
+import { DiscountSummaryComponent } from './components/discount-summary/discount-summary.component'
 
 @Component({
   selector: 'app-dashboard',
@@ -23,6 +24,7 @@ import { UsersByRoleChartComponent } from './components/charts/users-by-role-cha
     SuppliesTrendChartComponent,
     SupplyDistributionChartComponent,
     UsersByRoleChartComponent,
+    DiscountSummaryComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',

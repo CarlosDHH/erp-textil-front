@@ -4,7 +4,7 @@
 
   <div class="page-header">
     <h2>Roles</h2>
-    <p-button label="Nuevo rol" icon="pi pi-plus" (onClick)="goToCreate()" />
+    <p-button *appHasPermission="['roles', 'canCreate']" label="Nuevo rol" icon="pi pi-plus" (onClick)="goToCreate()" />
   </div>
 
   <div class="search-bar">
@@ -52,6 +52,7 @@
         <td>
           <div class="actions">
             <p-button
+              *appHasPermission="['roles', 'canEdit']"
               icon="pi pi-pencil"
               [rounded]="true"
               [text]="true"
@@ -59,6 +60,7 @@
               (onClick)="goToEdit(role.id)"
             />
             <p-button
+              *appHasPermission="['roles', 'canDelete']"
               icon="pi pi-trash"
               [rounded]="true"
               [text]="true"

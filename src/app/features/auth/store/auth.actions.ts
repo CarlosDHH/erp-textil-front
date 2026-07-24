@@ -11,6 +11,11 @@ export const login = createAction(
   props<{ email: string; password: string }>()
 )
 
+export const loginBiometric = createAction(
+  '[Auth] Login Biometric',
+  props<{ email: string }>()
+)
+
 export const loginSuccess = createAction(
   '[Auth] Login Success',
   props<{ user: AuthUser; accessToken: string; refreshToken: string }>()

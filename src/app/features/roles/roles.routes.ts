@@ -1,13 +1,15 @@
 import { Routes } from '@angular/router'
 import { roleGuard } from '../../core/guards/role.guard'
+import { permissionGuard } from '../../core/guards/permission.guard'
 
 export const rolesRoutes: Routes = [
   {
     path: '',
     loadComponent: () =>
       import('./pages/list/role-list.component').then((m) => m.RoleListComponent),
-    canActivate: [roleGuard],
-    data: { roles: ['admin'] },
+    // Cualquier rol con canView en "roles" puede entrar, no solo admin
+    // (coherente con el backend: GET /api/roles es de lectura abierta a autenticados).
+    canActivate: [permissionGuard('roles', 'canView')],
   },
   {
     path: 'new',

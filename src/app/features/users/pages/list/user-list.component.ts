@@ -10,6 +10,7 @@ import { ConfirmationService, MessageService } from 'primeng/api'
 import { FormsModule } from '@angular/forms'
 
 import { UserService, User } from '../../services/user.service'
+import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive'
 
 @Component({
   selector: 'app-user-list',
@@ -22,6 +23,7 @@ import { UserService, User } from '../../services/user.service'
     ConfirmDialogModule,
     ToastModule,
     FormsModule,
+    HasPermissionDirective,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './user-list.component.html',

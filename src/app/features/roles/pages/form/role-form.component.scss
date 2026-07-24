@@ -69,3 +69,65 @@
   padding-top: $spacing-lg;
   border-top: 1px solid #e2e8f0;
 }
+
+.permissions-section {
+  margin-top: $spacing-xl;
+  padding-top: $spacing-lg;
+  border-top: 1px solid #e2e8f0;
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+  }
+}
+
+.permissions-hint {
+  font-size: 13px;
+  color: #94a3b8;
+  margin: $spacing-xs 0 $spacing-md;
+}
+
+.state-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  color: #94a3b8;
+  padding: $spacing-xl;
+}
+
+.permissions-table {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.permissions-row {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(4, 1fr);
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm 0;
+  border-bottom: 1px solid #f1f5f9;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.permissions-head {
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.permission-module {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+  text-transform: capitalize;
+}

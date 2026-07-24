@@ -24,6 +24,90 @@ html, body {
   letter-spacing: -0.03em;
 }
 
+// ─── Campos de contraseña (p-password) ───────────────────────
+// PrimeNG posiciona el icono del ojo en `position: absolute` respecto al host
+// `.p-password` (que es `inline-flex`), NO respecto al <input>. Cuando el host
+// se estira con `w-full` y el input conserva su ancho por defecto, el icono
+// queda flotando fuera del campo. Forzamos que el input llene siempre el host
+// para que el ojo caiga dentro del input y sea clickeable.
+.p-password {
+  display: inline-flex;
+  width: 100%;
+
+  .p-password-input {
+    width: 100%;
+  }
+
+  // El icono es puramente decorativo para el layout: el clic lo captura el
+  // propio host, pero sin cursor no se percibe como accionable.
+  .p-password-toggle-mask-icon {
+    cursor: pointer;
+    // Neutraliza el `margin-top` del tema y centra el icono con precisión
+    // sin importar la altura real del input (py-3, p-inputtext-sm, etc.).
+    margin-top: 0;
+    transform: translateY(-50%);
+  }
+}
+
+// ─── SweetAlert2 con la identidad del ERP ────────────────────
+// Los modales se montan en <body>, fuera del DOM de cualquier componente,
+// por eso sus estilos viven aquí. Las clases las asigna AlertService.
+.erp-swal-popup {
+  border-radius: 16px;
+  padding: 24px 24px 20px;
+  font-family: $font-family;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18);
+}
+
+.erp-swal-title {
+  font-family: $font-display;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #1e293b;
+}
+
+.erp-swal-text {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.erp-swal-button {
+  border-radius: 10px;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: none;
+
+  &:focus-visible {
+    outline: 2px solid rgba($primary, 0.45);
+    outline-offset: 2px;
+  }
+}
+
+.erp-swal-toast {
+  border-radius: 12px;
+  font-family: $font-family;
+}
+
+// Variante oscura: se activa con la misma clase `.dark-mode` que usa PrimeNG.
+// SweetAlert2 monta el popup en <body>, por eso se contempla también :root.
+.dark-mode .erp-swal-popup,
+.dark-mode .erp-swal-toast {
+  background: #18181b;
+  border-color: rgba(255, 255, 255, 0.08);
+
+  .erp-swal-title {
+    color: #f8fafc;
+  }
+
+  .erp-swal-text {
+    color: rgba(255, 255, 255, 0.62);
+  }
+}
+
 // ─── Mobile sidebar drawer (tema oscuro) ─────────────────────
 // El p-drawer se renderiza en un portal fuera del DOM del componente,
 // por eso los overrides van aquí y no en layout.scss

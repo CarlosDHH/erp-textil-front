@@ -1,0 +1,94 @@
+<section class="discount-card">
+  <header class="discount-header">
+    <div class="discount-title">
+      <i class="pi pi-arrow-circle-down"></i>
+      <div>
+        <h3>Resumen de Descontación de Insumos</h3>
+        @if (summary(); as data) {
+          <p class="discount-period">
+            {{ data.from | date: 'dd/MM/yyyy' }} — {{ data.to | date: 'dd/MM/yyyy' }}
+          </p>
+        }
+      </div>
+    </div>
+
+    <p-selectbutton
+      [options]="rangeOptions"
+      optionLabel="label"
+      optionValue="value"
+      [ngModel]="range()"
+      [allowEmpty]="false"
+      (ngModelChange)="onRangeChange($event)"
+    />
+  </header>
+
+  @if (loading()) {
+    <div class="discount-state">
+      <i class="pi pi-spin pi-spinner"></i>
+      <span>Cargando movimientos...</span>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="discount-state discount-state--error">
+      <i class="pi pi-exclamation-triangle"></i>
+      <span>{{ errorMessage() }}</span>
+    </div>
+  } @else if (summary(); as data) {
+    @if (data.rows.length === 0) {
+      <div class="discount-state">
+        <i class="pi pi-inbox"></i>
+        <span>
+          No se registraron salidas ni mermas
+          {{ data.range === 'day' ? 'hoy' : 'esta semana' }}.
+        </span>
+      </div>
+    } @else {
+      <div class="discount-totals">
+        <div class="discount-total">
+          <span class="discount-total-label">Insumos afectados</span>
+          <span class="discount-total-value">{{ data.rows.length | number }}</span>
+        </div>
+        <div class="discount-total">
+          <span class="discount-total-label">Movimientos</span>
+          <span class="discount-total-value">{{ data.totalMovements | number }}</span>
+        </div>
+        <div class="discount-total">
+          <span class="discount-total-label">Merma acumulada</span>
+          <span class="discount-total-value discount-total-value--loss">
+            {{ data.totalLoss | number: '1.0-2' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="discount-table">
+        <div class="discount-row discount-row--head">
+          <span>Insumo</span>
+          <span class="align-right">Salidas</span>
+          <span class="align-right">Merma</span>
+          <span class="align-right">Total descontado</span>
+        </div>
+
+        @for (row of data.rows; track row.supplyId) {
+          <div class="discount-row">
+            <span class="discount-supply">
+              {{ row.supplyName }}
+              <small>{{ row.movements }} movimiento(s)</small>
+            </span>
+            <span class="align-right">{{ row.exitTotal | number: '1.0-2' }}</span>
+            <span class="align-right">
+              @if (row.lossTotal > 0) {
+                <!-- El pipe `number` devuelve string | null; p-tag espera string. -->
+                <p-tag [value]="(row.lossTotal | number: '1.0-2') ?? ''" severity="danger" />
+              } @else {
+                <span class="discount-zero">—</span>
+              }
+            </span>
+            <span class="align-right discount-amount">
+              {{ row.total | number: '1.0-2' }}
+              <small>{{ row.unitMeasure }}</small>
+            </span>
+          </div>
+        }
+      </div>
+    }
+  }
+</section>

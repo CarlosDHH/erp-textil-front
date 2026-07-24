@@ -36,6 +36,13 @@ export interface UserResponse {
   data: User
 }
 
+export interface CheckPhoneResponse {
+  statusCode: number
+  success: boolean
+  message: string
+  data: { exists: boolean }
+}
+
 export interface CreateUserPayload {
   name: string
   lastName: string
@@ -66,6 +73,13 @@ export class UserService {
 
   getById(id: string): Observable<UserResponse> {
     return this.http.get<UserResponse>(`${this.apiUrl}/${id}`)
+  }
+
+  /** Verifica si un teléfono ya está registrado por otro usuario. */
+  checkPhone(phone: string, excludeId?: string | null): Observable<CheckPhoneResponse> {
+    let params = new HttpParams().set('phone', phone)
+    if (excludeId) params = params.set('excludeId', excludeId)
+    return this.http.get<CheckPhoneResponse>(`${this.apiUrl}/check-phone`, { params })
   }
 
   create(payload: CreateUserPayload): Observable<UserResponse> {

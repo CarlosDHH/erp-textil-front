@@ -4,15 +4,27 @@
       <h1 class="text-2xl font-bold text-slate-800">Inventario de Insumos</h1>
       <p class="text-sm text-slate-500">Administra el registro y existencias de materias primas.</p>
     </div>
-    <button pButton label="Nuevo Material" icon="pi pi-plus" routerLink="new" class="bg-blue-600 hover:bg-blue-700 border-none"></button>
+    <div class="flex items-center gap-3">
+      <button
+        pButton
+        type="button"
+        label="Descargar Reporte PDF"
+        icon="pi pi-file-pdf"
+        [loading]="exporting"
+        (click)="exportPdf()"
+        class="p-button-outlined text-red-600 border-red-200 hover:bg-red-50"></button>
+      <button *appHasPermission="['insumos', 'canCreate']" pButton label="Nuevo Material" icon="pi pi-plus" routerLink="new" class="bg-blue-600 hover:bg-blue-700 border-none"></button>
+    </div>
   </div>
 
   <div class="card bg-white p-4 rounded-xl shadow-sm border border-slate-100">
     <div class="flex justify-between items-center mb-4">
-      <span class="p-input-icon-left w-full max-w-md">
-        <i class="pi pi-search"></i>
+      <!-- p-input-icon-left desapareció en PrimeNG 20; p-iconfield coloca el
+           icono dentro del campo en lugar de dejarlo suelto a su izquierda. -->
+      <p-iconfield class="w-full max-w-md">
+        <p-inputicon class="pi pi-search" />
         <input pInputText type="text" (input)="onSearch($event)" placeholder="Buscar por código, nombre o tipo..." class="w-full bg-gray-50 border-gray-300 rounded-lg" />
-      </span>
+      </p-iconfield>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">

@@ -36,13 +36,28 @@
           <label>Correo electrónico</label>
           <input pInputText formControlName="email" placeholder="correo@ejemplo.com" class="w-full" [readonly]="isEdit()" />
           @if (form.get('email')?.invalid && form.get('email')?.touched) {
-            <small class="error-msg">Correo inválido</small>
+            <small class="error-msg">
+              @if (form.get('email')?.hasError('required')) {
+                El correo electrónico es requerido
+              } @else {
+                Formato inválido. Debe incluir dominio y extensión, ej. usuario&#64;empresa.com
+              }
+            </small>
           }
         </div>
 
         <div class="field">
           <label>Teléfono</label>
           <p-inputmask mask="99-99-99-99-99" formControlName="phone" placeholder="Teléfono" class="w-full p-fluid" />
+          @if (form.get('phone')?.pending) {
+            <small class="text-gray-500">Verificando disponibilidad…</small>
+          }
+          @if (form.get('phone')?.hasError('phoneTaken')) {
+            <small class="error-msg">Este número de teléfono ya está registrado por otro usuario</small>
+          }
+          @if ((form.get('phone')?.hasError('required') || form.get('phone')?.hasError('minlength') || form.get('phone')?.hasError('maxlength')) && form.get('phone')?.touched) {
+            <small class="error-msg">Ingresa un teléfono válido</small>
+          }
         </div>
 
         <div class="field">
@@ -99,7 +114,7 @@
           type="submit"
           [label]="isEdit() ? 'Guardar cambios' : 'Crear usuario'"
           [loading]="loading()"
-          [disabled]="form.invalid"
+          [disabled]="form.invalid || form.pending"
         />
       </div>
 

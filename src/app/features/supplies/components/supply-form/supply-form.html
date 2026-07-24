@@ -8,25 +8,6 @@
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
       
       <div class="flex flex-col gap-2">
-        <label for="code" class="text-sm font-semibold text-gray-700">Código Identificador (Lote/Insumo)</label>
-        <input pInputText id="code" formControlName="code" autocomplete="off" (input)="onCodeInput($event)" (copy)="$event.preventDefault()" (paste)="$event.preventDefault()" (cut)="$event.preventDefault()" [placeholder]="codePlaceholder" class="w-full bg-gray-50 border-gray-200 rounded-xl" />
-        <small class="text-gray-500">
-        
-          Formato esperado:
-          <strong>{{ codePlaceholder }}</strong>
-        
-        </small>
-        @if (form.get('code')?.invalid && form.get('code')?.touched) {
-          <small class="text-red-500 font-medium"><i class="pi pi-exclamation-circle"></i> El código es obligatorio.</small>
-        }
-        @if(form.get('code')?.errors?.['pattern']){
-        <small class="text-red-500">
-          Solo se permiten letras mayúsculas, números y un guion (-).
-        </small>
-        }
-      </div>
-
-      <div class="flex flex-col gap-2">
         <label for="name" class="text-sm font-semibold text-gray-700">Nombre del Material</label>
         <input pInputText id="name" formControlName="name" (input)="onNameInput($event)" placeholder="Ej. Tela Algodón Premium Sarga" class="w-full bg-gray-50 border-gray-200 rounded-xl" />
         @if (form.get('name')?.invalid && form.get('name')?.touched) {
@@ -37,7 +18,7 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="flex flex-col gap-2">
           <label for="type" class="text-sm font-semibold text-gray-700">Categoría / Tipo</label>
-          <p-select [options]="types" optionLabel="label" optionValue="value" formControlName="type" (onChange)="onCategoryChange($event.value)">
+          <p-select [options]="types" optionLabel="label" optionValue="value" formControlName="type">
           </p-select>
           @if (form.get('type')?.invalid && form.get('type')?.touched) {
             <small class="text-red-500 font-medium"><i class="pi pi-exclamation-circle"></i> Categoría obligatoria.</small>
@@ -50,6 +31,16 @@
           </p-select>
           @if (form.get('unitMeasure')?.invalid && form.get('unitMeasure')?.touched) {
             <small class="text-red-500 font-medium"><i class="pi pi-exclamation-circle"></i> Unidad obligatoria.</small>
+          } @else if (form.hasError('unitMismatch')) {
+            <small class="text-red-500 font-medium">
+              <i class="pi pi-exclamation-circle"></i>
+              La unidad no corresponde a la categoría. Usa {{ allowedUnitsLabel }}.
+            </small>
+          } @else if (form.get('type')?.value) {
+            <small class="text-slate-500">
+              <i class="pi pi-info-circle"></i>
+              Para «{{ form.get('type')?.value }}» solo se admite {{ allowedUnitsLabel }}.
+            </small>
           }
         </div>
       </div>
@@ -62,16 +53,7 @@
 
         <div class="flex flex-col gap-2">
           <label for="minStock" class="text-sm font-semibold text-gray-700">Stock Mínimo (Alerta Crítica)</label>
-          <p-inputNumber inputmode="numeric" [min]="0" [max]="form.get('currentStock')?.value" [useGrouping]="false" id="minStock" formControlName="minStock" class="w-full bg-gray-50 border-gray-200 rounded-xl" />
-          @if(form.errors?.['minGreaterThanStock']){
-          
-          <small class="text-red-500">
-          
-            El stock mínimo no puede ser mayor que el stock disponible.
-          
-          </small>
-          
-          }
+          <p-inputNumber inputmode="numeric" [min]="0" [useGrouping]="false" id="minStock" formControlName="minStock" class="w-full bg-gray-50 border-gray-200 rounded-xl" />
         </div>
       </div>
 
