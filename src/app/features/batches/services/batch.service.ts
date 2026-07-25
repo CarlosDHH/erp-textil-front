@@ -2,14 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Batch } from '../models/batch.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BatchService {
   private http = inject(HttpClient);
-  // Asegúrate de que esta URL coincida con tu environment
-  private apiUrl = 'http://localhost:3000/api/batch';
+  private apiUrl = `${environment.apiUrl}/batch`;
 
   getBatches(page = 1, limit = 20, search = ''): Observable<any> {
     let params = new HttpParams()

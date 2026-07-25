@@ -2,14 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Supplier } from '../models/supplier.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SupplierService {
   private http = inject(HttpClient);
-  // Asegúrate de que esta URL coincida con tu environment
-  private apiUrl = 'http://localhost:3000/api/suppliers'; 
+  private apiUrl = `${environment.apiUrl}/suppliers`;
 
   getSuppliers(page = 1, limit = 20, search = ''): Observable<any> {
     let params = new HttpParams()
