@@ -21,6 +21,7 @@ import { RoleService, RolePermission } from '../../../roles/services/role.servic
 import { ModuleService } from '../../../roles/services/module.service'
 import { RolePermissionService } from '../../../roles/services/role-permission.service'
 import { AuthService } from '../../../auth/services/auth.service'
+import { AlertService } from '../../../../core/services/alert.service'
 import { selectUser } from '../../../auth/store/auth.selectors'
 import { unitLabel } from '../../../../core/utils/inventory-labels'
 
@@ -54,6 +55,7 @@ export class UserProfileComponent implements OnInit {
   private userActivityService = inject(UserActivityService)
   private authService = inject(AuthService)
   private messageService = inject(MessageService)
+  private alertService = inject(AlertService)
 
   user = signal<User | null>(null)
   roleActive = signal<boolean | null>(null)
@@ -76,6 +78,10 @@ export class UserProfileComponent implements OnInit {
   passwordVerifying = signal(false)
   passwordError = signal<string | null>(null)
   biometricRegistering = signal(false)
+  // null mientras se consulta el estado; luego true/false según haya huella.
+  hasPasskey = signal<boolean | null>(null)
+  // Qué hará el modal de contraseña tras verificar: registrar o eliminar la huella.
+  private biometricAction = signal<'register' | 'delete'>('register')
   passwordForm = this.fb.group({
     password: ['', [Validators.required]],
   })
@@ -99,8 +105,19 @@ export class UserProfileComponent implements OnInit {
         this.isOwnProfile.set(true)
         if (sessionUser?.id) {
           this.loadUser(sessionUser.id)
+          this.loadBiometricStatus()
         }
       })
+  }
+
+  /** Consulta si el usuario en sesión ya tiene huella, para mostrar Registrar o Eliminar. */
+  private loadBiometricStatus(): void {
+    if (!this.webAuthnSupported()) return
+    this.authService.getBiometricStatus().subscribe({
+      next: (res) => this.hasPasskey.set(!!res.data?.registered),
+      // Si la consulta falla, se asume "sin huella" para no bloquear el registro.
+      error: () => this.hasPasskey.set(false),
+    })
   }
 
   loadUser(id: string): void {
@@ -251,10 +268,17 @@ export class UserProfileComponent implements OnInit {
 
   // ---- Registro biométrico ----
 
-  openPasswordModal(): void {
+  /** Abre el modal de contraseña. `action` define qué se hace tras verificarla. */
+  openPasswordModal(action: 'register' | 'delete' = 'register'): void {
+    this.biometricAction.set(action)
     this.passwordForm.reset()
     this.passwordError.set(null)
     this.showPasswordModal.set(true)
+  }
+
+  /** Texto del modal según la acción en curso. */
+  get passwordModalIsDelete(): boolean {
+    return this.biometricAction() === 'delete'
   }
 
   onPasswordSubmit(): void {
@@ -275,7 +299,39 @@ export class UserProfileComponent implements OnInit {
         return
       }
       this.showPasswordModal.set(false)
-      this.registerBiometric()
+      if (this.biometricAction() === 'delete') {
+        this.deleteBiometric()
+      } else {
+        this.registerBiometric()
+      }
+    })
+  }
+
+  /** Elimina la huella registrada para poder volver a registrar una nueva. */
+  private deleteBiometric(): void {
+    this.biometricRegistering.set(true)
+    this.authService.deleteBiometric().subscribe({
+      next: (res) => {
+        this.biometricRegistering.set(false)
+        if (res.success) {
+          this.hasPasskey.set(false)
+        }
+        this.messageService.add({
+          severity: res.success ? 'success' : 'error',
+          summary: 'Huella biométrica',
+          detail: res.success
+            ? 'Huella eliminada. Ya puedes registrar una nueva.'
+            : res.message,
+        })
+      },
+      error: (err) => {
+        this.biometricRegistering.set(false)
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Huella biométrica',
+          detail: err?.error?.message ?? 'No se pudo eliminar la huella biométrica.',
+        })
+      },
     })
   }
 
@@ -298,6 +354,9 @@ export class UserProfileComponent implements OnInit {
             this.authService.verifyBiometricRegister(credential).subscribe({
               next: (verifyRes) => {
                 this.biometricRegistering.set(false)
+                if (verifyRes.success) {
+                  this.hasPasskey.set(true)
+                }
                 this.messageService.add({
                   severity: verifyRes.success ? 'success' : 'error',
                   summary: 'Huella biométrica',
