@@ -63,6 +63,21 @@ export interface BiometricRegisterOptionsResponse {
   data: PublicKeyCredentialCreationOptionsJSON
 }
 
+export interface BiometricStatus {
+  registered: boolean
+  friendlyName: string | null
+  deviceType: string | null
+  createdAt: string | null
+  lastUsedAt: string | null
+}
+
+export interface BiometricStatusResponse {
+  statusCode: number
+  success: boolean
+  message: string
+  data: BiometricStatus
+}
+
 export type SessionStatus = 'online' | 'offline'
 
 @Injectable({ providedIn: 'root' })
@@ -104,6 +119,16 @@ export class AuthService {
         })
       )
     )
+  }
+
+  /** Indica si el usuario en sesión ya tiene una huella registrada. */
+  getBiometricStatus(): Observable<BiometricStatusResponse> {
+    return this.http.get<BiometricStatusResponse>(`${this.apiUrl}/biometric/status`)
+  }
+
+  /** Elimina la huella del usuario en sesión para poder registrar otra. */
+  deleteBiometric(): Observable<ApiMessageResponse> {
+    return this.http.delete<ApiMessageResponse>(`${this.apiUrl}/biometric`)
   }
 
   getBiometricRegisterOptions(): Observable<BiometricRegisterOptionsResponse> {

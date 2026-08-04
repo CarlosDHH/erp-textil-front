@@ -3,6 +3,7 @@
 # Compiled output
 /dist
 /tmp
+/out
 /out-tsc
 /bazel-out
 
@@ -41,3 +42,10 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# TestSprite / reportes de QA generados
+testsprite_tests/
+.testsprite/
+testsprite_logs/
+testsprite.yml
+testsprite-mcp-test-report.*

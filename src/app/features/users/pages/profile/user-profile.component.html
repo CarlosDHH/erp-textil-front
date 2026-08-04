@@ -76,15 +76,33 @@
           <div class="biometric-section">
             <div class="biometric-text">
               <span class="detail-label">Seguridad biométrica</span>
-              <span class="detail-value">Registra tu huella o rostro para iniciar sesión más rápido.</span>
+              @if (hasPasskey()) {
+                <span class="detail-value">
+                  Tienes una huella registrada. Para usar otro dispositivo, elimínala y registra una nueva.
+                </span>
+              } @else {
+                <span class="detail-value">Registra tu huella o rostro para iniciar sesión más rápido.</span>
+              }
             </div>
-            <p-button
-              label="Registrar Huella Biométrica"
-              icon="pi pi-shield"
-              [outlined]="true"
-              [loading]="biometricRegistering()"
-              (onClick)="openPasswordModal()"
-            />
+
+            @if (hasPasskey()) {
+              <p-button
+                label="Eliminar Huella"
+                icon="pi pi-trash"
+                severity="danger"
+                [outlined]="true"
+                [loading]="biometricRegistering()"
+                (onClick)="openPasswordModal('delete')"
+              />
+            } @else {
+              <p-button
+                label="Registrar Huella Biométrica"
+                icon="pi pi-shield"
+                [outlined]="true"
+                [loading]="biometricRegistering()"
+                (onClick)="openPasswordModal('register')"
+              />
+            }
           </div>
         }
       </div>
@@ -198,7 +216,11 @@
   [style]="{ width: '26rem' }"
 >
   <p class="text-gray-500 text-sm mb-4">
-    Por seguridad, introduce tu contraseña actual antes de registrar tu huella/rostro.
+    @if (passwordModalIsDelete) {
+      Por seguridad, introduce tu contraseña actual antes de eliminar tu huella/rostro.
+    } @else {
+      Por seguridad, introduce tu contraseña actual antes de registrar tu huella/rostro.
+    }
   </p>
 
   @if (passwordError()) {
